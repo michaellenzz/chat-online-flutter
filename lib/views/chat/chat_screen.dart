@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChatScreen extends StatelessWidget {
+  
   ChatScreen({Key? key}) : super(key: key);
 
   final imageUser =
@@ -84,7 +85,7 @@ class ChatScreen extends StatelessWidget {
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           Text(
-                            value.messages[i].data()['message'],
+                            value.messages[i].data()['message'],  
                             style: const TextStyle(
                                 fontSize: 18, fontWeight: FontWeight.w500),
                           ),
