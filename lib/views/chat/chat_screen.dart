@@ -107,6 +107,7 @@ class ChatScreen extends StatelessWidget {
                           Container(
                             alignment: Alignment.bottomRight,
                             child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.end,
                               mainAxisSize: MainAxisSize.min,
                               children: [
                                 Text(
