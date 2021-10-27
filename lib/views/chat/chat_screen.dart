@@ -4,11 +4,10 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
 class ChatScreen extends StatelessWidget {
-  
-  ChatScreen({Key? key}) : super(key: key);
+  // ignore: prefer_typing_uninitialized_variables
+  final user;
+  ChatScreen(this.user, {Key? key}) : super(key: key);
 
-  final imageUser =
-      'https://vilamulher.com.br/imagens/thumbs/2014/11/10/4-razoes-para-ser-uma-pessoa-mais-curiosa-thumb-570.jpg';
 
   final mensagem = TextEditingController();
 
@@ -33,7 +32,7 @@ class ChatScreen extends StatelessWidget {
             InkWell(
               child: CircleAvatar(
                 radius: 25,
-                backgroundImage: NetworkImage(imageUser),
+                backgroundImage: NetworkImage(user.data()['photo']),
               ),
               onTap: () {
                 Navigator.of(context).pop();
@@ -43,12 +42,12 @@ class ChatScreen extends StatelessWidget {
               padding: const EdgeInsets.symmetric(horizontal: 8),
               child: Column(
                 crossAxisAlignment: CrossAxisAlignment.start,
-                children: const [
+                children: [
                   Text(
-                    'Morgana',
-                    style: TextStyle(fontSize: 20),
+                    user.data()['name'],
+                    style: const TextStyle(fontSize: 20),
                   ),
-                  Text(
+                  const Text(
                     'Online',
                     style: TextStyle(fontSize: 13),
                   ),
@@ -60,8 +59,8 @@ class ChatScreen extends StatelessWidget {
       ),
       body: Container(
           color: Colors.yellow.withAlpha(40),
-          padding: const EdgeInsets.all(8),
-          margin: const EdgeInsets.only(bottom: 56),
+          padding: const EdgeInsets.fromLTRB(8, 0, 8, 57),
+          //pa: const EdgeInsets.only(bottom: 56),
           child: GetBuilder<ChatController>(
             init: ChatController(),
             builder: (value) => ListView.builder(
@@ -75,109 +74,97 @@ class ChatScreen extends StatelessWidget {
                   } else {
                     var time = value.messages[i].data()['time'].toDate();
                     var sender = value.messages[i].data()['sender'];
-                    
+
                     return Bubble(
-                      margin: const BubbleEdges.only(top: 10),
-                      alignment: sender == cc.userLogged ? Alignment.topRight : Alignment.topLeft,
-                      nip: sender == cc.userLogged ? BubbleNip.rightBottom : BubbleNip.leftTop,
-                      color: sender == cc.userLogged ?  const Color.fromRGBO(255, 255, 255, 255) : const Color.fromRGBO(225, 255, 199, 1.0),
+                      margin: const BubbleEdges.only(top: 5, bottom: 5),
+                      //padding: const BubbleEdges.symmetric(vertical: 12),
+                      alignment: sender == cc.userLogged
+                          ? Alignment.topRight
+                          : Alignment.topLeft,
+                      nip: sender == cc.userLogged
+                          ? BubbleNip.rightBottom
+                          : BubbleNip.leftTop,
+                      color: sender == cc.userLogged
+                          ? const Color.fromRGBO(255, 255, 255, 255)
+                          : const Color.fromRGBO(225, 255, 199, 1.0),
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.end,
                         children: [
-                          Text(
-                            value.messages[i].data()['message'],  
-                            style: const TextStyle(
-                                fontSize: 18, fontWeight: FontWeight.w500),
+                          Flexible(
+                            child: Padding(
+                              padding: const EdgeInsets.symmetric(vertical: 8),
+                              child: Text(
+                                value.messages[i].data()['message'],
+                                style: const TextStyle(
+                                    fontSize: 18, fontWeight: FontWeight.w500),
+                              ),
+                            ),
                           ),
                           const SizedBox(
                             width: 8,
                           ),
                           Container(
-                            alignment: Alignment.bottomCenter,
-                            padding: const EdgeInsets.fromLTRB(9, 16, 0, 0),
-                            child: Text(
-                              '${time.hour}:${time.minute}',
-                              style: const TextStyle(fontSize: 14),
+                            alignment: Alignment.bottomRight,
+                            child: Column(
+                              mainAxisSize: MainAxisSize.min,
+                              children: [
+                                Text(
+                                  '${time.hour}:${time.minute}',
+                                  style: TextStyle(
+                                      fontSize: 13, color: Colors.grey[800]),
+                                ),
+                                const SizedBox(
+                                  width: 5,
+                                ),
+                                sender == cc.userLogged
+                                    ? Image.asset(
+                                        'assets/images/double-tick.png',
+                                        width: 18,
+                                        color: value.messages[i]
+                                                    .data()['status'] ==
+                                                'read'
+                                            ? Colors.blue
+                                            : Colors.grey)
+                                    : Container()
+                              ],
                             ),
-                          ),
+                          )
                         ],
                       ),
                     );
                   }
                 }),
-          ) /*ListView(
-          reverse: true,
-          children: [
-            Bubble(
-              margin: const BubbleEdges.only(top: 10),
-              alignment: Alignment.topLeft,
-              nip: BubbleNip.leftTop,
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Fala menino Ney',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  const SizedBox(
-                    width: 8,
-                  ),
-                  Container(
-                    alignment: Alignment.bottomCenter,
-                    padding: const EdgeInsets.fromLTRB(9, 16, 0, 0),
-                    child: const Text(
-                      '08:41',
-                      style: TextStyle(fontSize: 14),
-                    ),
-                  ),
-                ],
-              ),
-            ),
-            Bubble(
-              margin: const BubbleEdges.only(top: 10),
-              alignment: Alignment.topRight,
-              nip: BubbleNip.rightBottom,
-              color: const Color.fromRGBO(225, 255, 199, 1.0),
-              child: Row(
-                mainAxisSize: MainAxisSize.min,
-                children: [
-                  const Text(
-                    'Fala aí meu querido!!!',
-                    style: TextStyle(fontSize: 18, fontWeight: FontWeight.w500),
-                  ),
-                  Container(
-                      alignment: Alignment.bottomCenter,
-                      padding: const EdgeInsets.fromLTRB(9, 16, 0, 0),
-                      child: Image.asset(
-                        'assets/images/tick.png',
-                        width: 22,
-                        color: Colors.grey,
-                      )),
-                ],
-              ),
-            ),
-          ],
-        ),*/
-          ),
+          )),
       bottomSheet: Container(
         color: Colors.yellow.withAlpha(40),
         child: Row(
           children: [
             Expanded(
               child: Container(
-                margin: const EdgeInsets.all(5),
+                width: 200,
+                margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
                 decoration: BoxDecoration(
                     borderRadius: BorderRadius.circular(30),
                     color: Colors.deepOrangeAccent[100]),
-                child: TextField(
-                  controller: mensagem,
-                  textCapitalization: TextCapitalization.sentences,
-                  style: const TextStyle(fontSize: 19, color: Colors.black),
-                  decoration: const InputDecoration(
-                      contentPadding: EdgeInsets.only(left: 15, right: 10),
-                      border: InputBorder.none,
-                      hintText: 'Digite aqui...',
-                      hintStyle: TextStyle(color: Colors.white, fontSize: 18)),
+                child: SizedBox(
+                  width: 200,
+                  child: ConstrainedBox(
+                    constraints: const BoxConstraints(maxHeight: 150),
+                    child: TextField(
+                      maxLines: null,
+                      controller: mensagem,
+                      textCapitalization: TextCapitalization.sentences,
+                      style: const TextStyle(fontSize: 19, color: Colors.black),
+                      decoration: const InputDecoration(
+                          contentPadding: EdgeInsets.only(
+                              left: 15, right: 10, top: 10, bottom: 10),
+                          border: InputBorder.none,
+                          hintText: 'Digite aqui...',
+                          hintStyle:
+                              TextStyle(color: Colors.white, fontSize: 18)),
+                    ),
+                  ),
                 ),
               ),
             ),
@@ -191,8 +178,10 @@ class ChatScreen extends StatelessWidget {
               child: IconButton(
                   splashRadius: 23,
                   onPressed: () {
-                    cc.sendMessages(mensagem.text);
-                    mensagem.clear();
+                    if (mensagem.text.isNotEmpty) {
+                      cc.sendMessages(mensagem.text, user.id);
+                      mensagem.clear();
+                    }
                   },
                   icon: const Icon(
                     Icons.send,

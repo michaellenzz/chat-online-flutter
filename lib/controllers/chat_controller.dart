@@ -3,11 +3,15 @@ import 'package:get/get.dart';
 
 class ChatController extends GetxController {
   List<QueryDocumentSnapshot<Map<String, dynamic>>> messages = [];
-  String userLogged = 'michael';
+  List<QueryDocumentSnapshot<Map<String, dynamic>>> chats = [];
+
+  String userLogged = 'morgana';
+  String userSelected = '';
 
   @override
   void onInit() {
     getMessages();
+    getChats();
     super.onInit();
   }
 
@@ -22,8 +26,42 @@ class ChatController extends GetxController {
     });
   }
 
-  sendMessages(message) async {
-    await FirebaseFirestore.instance.collection('messages').doc().set(
-        {'sender': 'michael', 'message': message, 'time': Timestamp.now()});
+  getChats() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(userLogged)
+        .collection('chats')
+        .snapshots()
+        .forEach((element) {
+      chats = element.docs;
+      update();
+    });
+  }
+
+  sendMessages(message, idChat) async {
+    await FirebaseFirestore.instance.collection('messages').doc().set({
+      'status': 'unread',
+      'sender': userLogged,
+      'message': message,
+      'time': Timestamp.now(),
+      'chatId': idChat
+    });
+
+    await FirebaseFirestore.instance.collection('users')
+      .doc(userLogged)
+      .collection('chats')
+      .doc(userSelected).update({
+      'lastMessage': message,
+      'lastTime': Timestamp.now()
+    });
+
+    await FirebaseFirestore.instance.collection('users')
+      .doc(userSelected)
+      .collection('chats')
+      .doc(userLogged).update({
+      'lastMessage': message,
+      'lastTime': Timestamp.now()
+    });
+
   }
 }
