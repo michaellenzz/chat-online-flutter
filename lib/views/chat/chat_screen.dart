@@ -8,7 +8,6 @@ class ChatScreen extends StatelessWidget {
   final user;
   ChatScreen(this.user, {Key? key}) : super(key: key);
 
-
   final mensagem = TextEditingController();
 
   final ChatController cc = Get.put(ChatController());
@@ -22,7 +21,7 @@ class ChatScreen extends StatelessWidget {
               alignment: Alignment.centerRight,
               child: const Icon(Icons.arrow_back_ios)),
           onTap: () {
-            Navigator.of(context).pop();
+            Get.back();
           },
         ),
         leadingWidth: 30,
@@ -30,12 +29,25 @@ class ChatScreen extends StatelessWidget {
         title: Row(
           children: [
             InkWell(
-              child: CircleAvatar(
-                radius: 25,
-                backgroundImage: NetworkImage(user.data()['photo']),
-              ),
+              child: user.data()['photo'].isEmpty
+                  ? Container(
+                      width: 40,
+                      height: 40,
+                      decoration: BoxDecoration(
+                          borderRadius: BorderRadius.circular(30),
+                          color: Colors.grey[300]),
+                      child: const Icon(
+                        Icons.person,
+                        size: 35,
+                        color: Colors.white,
+                      ),
+                    )
+                  : CircleAvatar(
+                      radius: 22,
+                      backgroundImage: NetworkImage(user.data()['photo']),
+                    ),
               onTap: () {
-                Navigator.of(context).pop();
+                Get.back();
               },
             ),
             Padding(
@@ -180,7 +192,7 @@ class ChatScreen extends StatelessWidget {
                   splashRadius: 23,
                   onPressed: () {
                     if (mensagem.text.isNotEmpty) {
-                      cc.sendMessages(mensagem.text, user.id);
+                      cc.sendMessages(mensagem.text, user.data());
                       mensagem.clear();
                     }
                   },
