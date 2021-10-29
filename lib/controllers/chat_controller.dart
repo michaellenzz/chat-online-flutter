@@ -7,9 +7,15 @@ class ChatController extends GetxController {
 
   String userLogged = 'morgana';
   String nameUserLogged = 'Morgana';
+  String myPhoneNumber = '+5561998752594';
   String photoUserLogged =
       'https://i.pinimg.com/originals/56/2e/fc/562efc6231a0b03e13ea715ae1ad9f1c.png';
-  String userSelected = '';
+  //'https://st2.depositphotos.com/3433891/6661/i/600/depositphotos_66613339-stock-photo-man-with-crossed-arms.jpg';
+
+  //dados do amigo
+  String friendSelected = '';
+  String photoFriend = '';
+  String statusFriend = '';
 
   @override
   void onInit() {
@@ -19,10 +25,9 @@ class ChatController extends GetxController {
   }
 
   getMessages() async {
-
     await FirebaseFirestore.instance
         .collection('messages')
-        .where('chatId', isEqualTo: 'michael')
+        .where('chatId', arrayContains: userLogged)
         .orderBy('time', descending: true)
         .snapshots()
         .forEach((element) {
@@ -36,9 +41,22 @@ class ChatController extends GetxController {
         .collection('users')
         .doc(userLogged)
         .collection('chats')
+        .orderBy('lastTime', descending: true)
         .snapshots()
         .forEach((element) {
       chats = element.docs;
+      update();
+    });
+  }
+
+  getStatusFriend() async {
+    await FirebaseFirestore.instance
+        .collection('users')
+        .doc(friendSelected)
+        .get()
+        .then((value) {
+      statusFriend = value.data()!['status'];
+      photoFriend = value.data()!['photo'];
       update();
     });
   }
@@ -49,14 +67,18 @@ class ChatController extends GetxController {
       'sender': userLogged,
       'message': message,
       'time': Timestamp.now(),
-      'chatId': [userLogged, userSelected]
+      'chatId': [userLogged, friendSelected]
     });
+
+    updateStatusMessage(){
+      //TODO
+    }
 
     await FirebaseFirestore.instance
         .collection('users')
         .doc(userLogged)
         .collection('chats')
-        .doc(userSelected)
+        .doc(friendSelected)
         .set({
       'lastMessage': message,
       'lastTime': Timestamp.now(),
@@ -66,7 +88,7 @@ class ChatController extends GetxController {
 
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(userSelected)
+        .doc(friendSelected)
         .collection('chats')
         .doc(userLogged)
         .set({

@@ -6,7 +6,10 @@ import 'package:get/get.dart';
 class ChatScreen extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
   final user;
-  ChatScreen(this.user, {Key? key}) : super(key: key);
+  // ignore: use_key_in_widget_constructors
+  ChatScreen(this.user) {
+    cc.getStatusFriend();
+  }
 
   final mensagem = TextEditingController();
 
@@ -59,10 +62,15 @@ class ChatScreen extends StatelessWidget {
                     user.data()['name'],
                     style: const TextStyle(fontSize: 20),
                   ),
-                  const Text(
-                    'Online',
-                    style: TextStyle(fontSize: 13),
-                  ),
+                  GetBuilder<ChatController>(
+                    init: ChatController(),
+                    builder: (value) => value.statusFriend.isEmpty
+                        ? Container()
+                        : Text(
+                            value.statusFriend,
+                            style: const TextStyle(fontSize: 13),
+                          ),
+                  )
                 ],
               ),
             )
@@ -84,68 +92,75 @@ class ChatScreen extends StatelessWidget {
                       child: CircularProgressIndicator(),
                     );
                   } else {
-                    var time = value.messages[i].data()['time'].toDate();
-                    var sender = value.messages[i].data()['sender'];
+                    //verificar mensagens do amigo especifico
+                    if (value.messages[i].data()['chatId'].contains(user.id)) {
+                      var time = value.messages[i].data()['time'].toDate();
+                      var sender = value.messages[i].data()['sender'];
 
-                    return Bubble(
-                      margin: const BubbleEdges.only(top: 5, bottom: 5),
-                      //padding: const BubbleEdges.symmetric(vertical: 12),
-                      alignment: sender == cc.userLogged
-                          ? Alignment.topRight
-                          : Alignment.topLeft,
-                      nip: sender == cc.userLogged
-                          ? BubbleNip.rightBottom
-                          : BubbleNip.leftTop,
-                      color: sender == cc.userLogged
-                          ? const Color.fromRGBO(255, 255, 255, 255)
-                          : const Color.fromRGBO(225, 255, 199, 1.0),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.end,
-                        children: [
-                          Flexible(
-                            child: Padding(
-                              padding: const EdgeInsets.symmetric(vertical: 8),
-                              child: Text(
-                                value.messages[i].data()['message'],
-                                style: const TextStyle(
-                                    fontSize: 18, fontWeight: FontWeight.w500),
+                      return Bubble(
+                        margin: const BubbleEdges.only(top: 5, bottom: 5),
+                        //padding: const BubbleEdges.symmetric(vertical: 12),
+                        alignment: sender == cc.userLogged
+                            ? Alignment.topRight
+                            : Alignment.topLeft,
+                        nip: sender == cc.userLogged
+                            ? BubbleNip.rightBottom
+                            : BubbleNip.leftTop,
+                        color: sender == cc.userLogged
+                            ? const Color.fromRGBO(255, 255, 255, 255)
+                            : const Color.fromRGBO(225, 255, 199, 1.0),
+                        child: Row(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.end,
+                          children: [
+                            Flexible(
+                              child: Padding(
+                                padding:
+                                    const EdgeInsets.symmetric(vertical: 8),
+                                child: Text(
+                                  value.messages[i].data()['message'],
+                                  style: const TextStyle(
+                                      fontSize: 18,
+                                      fontWeight: FontWeight.w500),
+                                ),
                               ),
                             ),
-                          ),
-                          const SizedBox(
-                            width: 8,
-                          ),
-                          Container(
-                            alignment: Alignment.bottomRight,
-                            child: Column(
-                              crossAxisAlignment: CrossAxisAlignment.end,
-                              mainAxisSize: MainAxisSize.min,
-                              children: [
-                                Text(
-                                  '${time.hour}:${time.minute}',
-                                  style: TextStyle(
-                                      fontSize: 13, color: Colors.grey[800]),
-                                ),
-                                const SizedBox(
-                                  width: 5,
-                                ),
-                                sender == cc.userLogged
-                                    ? Image.asset(
-                                        'assets/images/double-tick.png',
-                                        width: 18,
-                                        color: value.messages[i]
-                                                    .data()['status'] ==
-                                                'read'
-                                            ? Colors.blue
-                                            : Colors.grey)
-                                    : Container()
-                              ],
+                            const SizedBox(
+                              width: 8,
                             ),
-                          )
-                        ],
-                      ),
-                    );
+                            Container(
+                              alignment: Alignment.bottomRight,
+                              child: Column(
+                                crossAxisAlignment: CrossAxisAlignment.end,
+                                mainAxisSize: MainAxisSize.min,
+                                children: [
+                                  Text(
+                                    '${time.hour < 10 ? '0${time.hour}' : '${time.hour}'}:${time.minute < 10 ? '0${time.minute}' : '${time.minute}'}',
+                                    style: TextStyle(
+                                        fontSize: 13, color: Colors.grey[800]),
+                                  ),
+                                  const SizedBox(
+                                    width: 5,
+                                  ),
+                                  sender == cc.userLogged
+                                      ? Image.asset(
+                                          'assets/images/double-tick.png',
+                                          width: 18,
+                                          color: value.messages[i]
+                                                      .data()['status'] ==
+                                                  'read'
+                                              ? Colors.blue
+                                              : Colors.grey)
+                                      : Container()
+                                ],
+                              ),
+                            )
+                          ],
+                        ),
+                      );
+                    } else {
+                      return Container();
+                    }
                   }
                 }),
           )),

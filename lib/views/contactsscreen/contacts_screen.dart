@@ -51,7 +51,7 @@ class ContactsScreen extends StatelessWidget {
                   children: [
                     InkWell(
                       onTap: () {
-                        cc.userSelected = value.contacts[i].id;
+                        cc.friendSelected = value.contacts[i].id;
                         Get.off(() => ChatScreen(value.contacts[i]));
                       },
                       child: Row(
