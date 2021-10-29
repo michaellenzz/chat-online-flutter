@@ -3,6 +3,7 @@ import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
+// ignore: must_be_immutable
 class ChatScreen extends StatelessWidget {
   // ignore: prefer_typing_uninitialized_variables
   final user;
@@ -14,6 +15,8 @@ class ChatScreen extends StatelessWidget {
   final mensagem = TextEditingController();
 
   final ChatController cc = Get.put(ChatController());
+
+  List<String> messagesUnread = [];
 
   @override
   Widget build(BuildContext context) {
@@ -62,6 +65,8 @@ class ChatScreen extends StatelessWidget {
                     user.data()['name'],
                     style: const TextStyle(fontSize: 20),
                   ),
+                  //mostrar presença do amigo
+                  /*TODO
                   GetBuilder<ChatController>(
                     init: ChatController(),
                     builder: (value) => value.statusFriend.isEmpty
@@ -71,6 +76,7 @@ class ChatScreen extends StatelessWidget {
                             style: const TextStyle(fontSize: 13),
                           ),
                   )
+                  */
                 ],
               ),
             )
@@ -97,6 +103,15 @@ class ChatScreen extends StatelessWidget {
                       var time = value.messages[i].data()['time'].toDate();
                       var sender = value.messages[i].data()['sender'];
 
+                      //pegar as mensagens não lidas
+                      if (sender != cc.userLogged &&
+                          value.messages[i].data()['status'] == 'unread' &&
+                          value.messages[i]
+                              .data()['chatId']
+                              .contains(user.id)) {
+                        cc.updateStatusMessage(value.messages[i].id);
+                      }
+
                       return Bubble(
                         margin: const BubbleEdges.only(top: 5, bottom: 5),
                         //padding: const BubbleEdges.symmetric(vertical: 12),
@@ -107,8 +122,8 @@ class ChatScreen extends StatelessWidget {
                             ? BubbleNip.rightBottom
                             : BubbleNip.leftTop,
                         color: sender == cc.userLogged
-                            ? const Color.fromRGBO(255, 255, 255, 255)
-                            : const Color.fromRGBO(225, 255, 199, 1.0),
+                            ? const Color.fromRGBO(255, 255, 255, 100)
+                            : const Color(0xFFfff291),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,

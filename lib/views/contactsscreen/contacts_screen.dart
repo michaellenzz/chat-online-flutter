@@ -88,7 +88,7 @@ class ContactsScreen extends StatelessWidget {
                                         fontSize: 19,
                                         fontWeight: FontWeight.w600),
                                   ),
-                                  Text(value.contacts[i].data()['status'],
+                                  Text(value.contacts[i].data()['phrase'],
                                       maxLines: 1,
                                       style: TextStyle(
                                           fontSize: 15,

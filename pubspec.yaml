@@ -19,6 +19,8 @@ dependencies:
   firebase_core: ^1.7.0
   get: ^4.3.8
   contacts_service: ^0.6.3
+  intl_phone_number_input: ^0.7.0+2
+  firebase_auth: ^3.1.4
 
 
 dev_dependencies:

@@ -8,6 +8,7 @@ class ChatController extends GetxController {
   String userLogged = 'morgana';
   String nameUserLogged = 'Morgana';
   String myPhoneNumber = '+5561998752594';
+  //String myPhoneNumber = '+5561998575936';
   String photoUserLogged =
       'https://i.pinimg.com/originals/56/2e/fc/562efc6231a0b03e13ea715ae1ad9f1c.png';
   //'https://st2.depositphotos.com/3433891/6661/i/600/depositphotos_66613339-stock-photo-man-with-crossed-arms.jpg';
@@ -21,6 +22,7 @@ class ChatController extends GetxController {
   void onInit() {
     getMessages();
     getChats();
+    getStatusFriend();
     super.onInit();
   }
 
@@ -50,15 +52,34 @@ class ChatController extends GetxController {
   }
 
   getStatusFriend() async {
-    await FirebaseFirestore.instance
-        .collection('users')
-        .doc(friendSelected)
-        .get()
-        .then((value) {
-      statusFriend = value.data()!['status'];
+    if (friendSelected.isNotEmpty) {
+      await FirebaseFirestore.instance
+          .collection('users')
+          .doc(friendSelected)
+          .snapshots()
+          .forEach((value) {
+            statusFriend = value.data()!['status'];
       photoFriend = value.data()!['photo'];
       update();
-    });
+          });
+    }
+  }
+
+  updateStatusMessage(String messageId) {
+    FirebaseFirestore.instance
+        .collection('messages')
+        .doc(messageId)
+        .update({'status': 'read'});
+  }
+
+  verifyPresense(bool online) {
+    var time = Timestamp.now().toDate();
+    var hour =
+        '${time.hour < 10 ? '0${time.hour}' : '${time.hour}'}:${time.minute < 10 ? '0${time.minute}' : '${time.minute}'}';
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(userLogged)
+        .update({'status': online ? 'online' : 'Visto por último às $hour'});
   }
 
   sendMessages(message, friend) async {
@@ -69,10 +90,6 @@ class ChatController extends GetxController {
       'time': Timestamp.now(),
       'chatId': [userLogged, friendSelected]
     });
-
-    updateStatusMessage(){
-      //TODO
-    }
 
     await FirebaseFirestore.instance
         .collection('users')
