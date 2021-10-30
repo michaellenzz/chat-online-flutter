@@ -1,5 +1,6 @@
 import 'package:bubble/bubble.dart';
 import 'package:chat_online_flutter/controllers/chat_controller.dart';
+import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -15,6 +16,7 @@ class ChatScreen extends StatelessWidget {
   final mensagem = TextEditingController();
 
   final ChatController cc = Get.put(ChatController());
+  final LoginController lc = Get.put(LoginController());
 
   List<String> messagesUnread = [];
 
@@ -104,7 +106,7 @@ class ChatScreen extends StatelessWidget {
                       var sender = value.messages[i].data()['sender'];
 
                       //pegar as mensagens não lidas
-                      if (sender != cc.userLogged &&
+                      if (sender != lc.userLogged.value &&
                           value.messages[i].data()['status'] == 'unread' &&
                           value.messages[i]
                               .data()['chatId']
@@ -115,13 +117,13 @@ class ChatScreen extends StatelessWidget {
                       return Bubble(
                         margin: const BubbleEdges.only(top: 5, bottom: 5),
                         //padding: const BubbleEdges.symmetric(vertical: 12),
-                        alignment: sender == cc.userLogged
+                        alignment: sender == lc.userLogged.value
                             ? Alignment.topRight
                             : Alignment.topLeft,
-                        nip: sender == cc.userLogged
+                        nip: sender == lc.userLogged.value
                             ? BubbleNip.rightBottom
                             : BubbleNip.leftTop,
-                        color: sender == cc.userLogged
+                        color: sender == lc.userLogged.value
                             ? const Color.fromRGBO(255, 255, 255, 100)
                             : const Color(0xFFfff291),
                         child: Row(
@@ -157,7 +159,7 @@ class ChatScreen extends StatelessWidget {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  sender == cc.userLogged
+                                  sender == lc.userLogged
                                       ? Image.asset(
                                           'assets/images/double-tick.png',
                                           width: 18,

@@ -1,3 +1,4 @@
+import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
@@ -5,31 +6,26 @@ class ChatController extends GetxController {
   List<QueryDocumentSnapshot<Map<String, dynamic>>> messages = [];
   List<QueryDocumentSnapshot<Map<String, dynamic>>> chats = [];
 
-  String userLogged = 'morgana';
-  String nameUserLogged = 'Morgana';
-  String myPhoneNumber = '+5561998752594';
-  //String myPhoneNumber = '+5561998575936';
-  String photoUserLogged =
-      'https://i.pinimg.com/originals/56/2e/fc/562efc6231a0b03e13ea715ae1ad9f1c.png';
-  //'https://st2.depositphotos.com/3433891/6661/i/600/depositphotos_66613339-stock-photo-man-with-crossed-arms.jpg';
 
-  //dados do amigo
-  String friendSelected = '';
-  String photoFriend = '';
-  String statusFriend = '';
+  LoginController lc = Get.put(LoginController());
 
   @override
   void onInit() {
-    getMessages();
-    getChats();
-    getStatusFriend();
+    //lc.verificarLogado();
+
+    if (lc.userLogged.value.isNotEmpty) {
+      getMessages();
+      getChats();
+      getStatusFriend();
+    }
+
     super.onInit();
   }
 
   getMessages() async {
     await FirebaseFirestore.instance
         .collection('messages')
-        .where('chatId', arrayContains: userLogged)
+        .where('chatId', arrayContains: lc.userLogged.value)
         .orderBy('time', descending: true)
         .snapshots()
         .forEach((element) {
@@ -41,7 +37,7 @@ class ChatController extends GetxController {
   getChats() async {
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(userLogged)
+        .doc(lc.userLogged.value)
         .collection('chats')
         .orderBy('lastTime', descending: true)
         .snapshots()
@@ -52,16 +48,16 @@ class ChatController extends GetxController {
   }
 
   getStatusFriend() async {
-    if (friendSelected.isNotEmpty) {
+    if (lc.friendSelected.isNotEmpty) {
       await FirebaseFirestore.instance
           .collection('users')
-          .doc(friendSelected)
+          .doc(lc.friendSelected)
           .snapshots()
           .forEach((value) {
-            statusFriend = value.data()!['status'];
-      photoFriend = value.data()!['photo'];
-      update();
-          });
+        lc.statusFriend = value.data()!['status'];
+        lc.photoFriend = value.data()!['photo'];
+        update();
+      });
     }
   }
 
@@ -78,24 +74,24 @@ class ChatController extends GetxController {
         '${time.hour < 10 ? '0${time.hour}' : '${time.hour}'}:${time.minute < 10 ? '0${time.minute}' : '${time.minute}'}';
     FirebaseFirestore.instance
         .collection('users')
-        .doc(userLogged)
+        .doc(lc.userLogged.value)
         .update({'status': online ? 'online' : 'Visto por último às $hour'});
   }
 
   sendMessages(message, friend) async {
     await FirebaseFirestore.instance.collection('messages').doc().set({
       'status': 'unread',
-      'sender': userLogged,
+      'sender': lc.userLogged.value,
       'message': message,
       'time': Timestamp.now(),
-      'chatId': [userLogged, friendSelected]
+      'chatId': [lc.userLogged.value, lc.friendSelected]
     });
 
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(userLogged)
+        .doc(lc.userLogged.value)
         .collection('chats')
-        .doc(friendSelected)
+        .doc(lc.friendSelected)
         .set({
       'lastMessage': message,
       'lastTime': Timestamp.now(),
@@ -105,14 +101,14 @@ class ChatController extends GetxController {
 
     await FirebaseFirestore.instance
         .collection('users')
-        .doc(friendSelected)
+        .doc(lc.friendSelected)
         .collection('chats')
-        .doc(userLogged)
+        .doc(lc.userLogged.value)
         .set({
       'lastMessage': message,
       'lastTime': Timestamp.now(),
-      'name': nameUserLogged,
-      'photo': photoUserLogged
+      'name': lc.nameUserLogged,
+      'photo': lc.photoUserLogged
     }, SetOptions(merge: true));
   }
 }

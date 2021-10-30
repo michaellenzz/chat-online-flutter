@@ -1,5 +1,6 @@
 import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:chat_online_flutter/controllers/contact_controller.dart';
+import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/views/chat/chat_screen.dart';
 import 'package:chat_online_flutter/views/contactsscreen/contacts_screen.dart';
 import 'package:flutter/material.dart';
@@ -8,7 +9,7 @@ import 'package:get/get.dart';
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
-  final ChatController cc = Get.put(ChatController());
+  final LoginController lc = Get.put(LoginController());
   final ContactController con = Get.put(ContactController());
 
   @override
@@ -40,7 +41,7 @@ class HomeScreen extends StatelessWidget {
                     return InkWell(
                       onTap: () {
                         //cc.getMessages();
-                        cc.friendSelected = value.chats[i].id;
+                        lc.friendSelected = value.chats[i].id;
                         Get.to(() => ChatScreen(value.chats[i]));
                       },
                       child: Column(

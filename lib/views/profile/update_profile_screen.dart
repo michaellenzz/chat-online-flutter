@@ -1,20 +1,21 @@
 // ignore_for_file: must_be_immutable
 
+import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
-import 'package:chat_online_flutter/views/profile/update_profile_screen.dart';
+import 'package:chat_online_flutter/views/home/home_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class SMSCodeScreen extends StatelessWidget {
-  SMSCodeScreen({Key? key}) : super(key: key);
+class UpdateProfileScreen extends StatelessWidget {
+  UpdateProfileScreen({Key? key}) : super(key: key);
 
   LoginController lc = Get.put(LoginController());
+  ChatController cc = Get.put(ChatController());
 
-  final codeSMS = TextEditingController();
+  final name = TextEditingController();
 
   @override
   Widget build(BuildContext context) {
-    double width = MediaQuery.of(context).size.width;
     return Scaffold(
         body: Container(
       padding: const EdgeInsets.all(10),
@@ -28,12 +29,9 @@ class SMSCodeScreen extends StatelessWidget {
                   crossAxisAlignment: CrossAxisAlignment.stretch,
                   children: [
                     const SizedBox(
-                      height: 60,
-                    ),
-                    const SizedBox(
                       height: 50,
                     ),
-                    const Text('Agora digite o código que recebeu por SMS',
+                    const Text('Configure seu perfil',
                         textAlign: TextAlign.center,
                         style: TextStyle(
                             fontSize: 16,
@@ -42,25 +40,23 @@ class SMSCodeScreen extends StatelessWidget {
                     const SizedBox(
                       height: 30,
                     ),
-                    Padding(
-                      padding: EdgeInsets.symmetric(horizontal: width * 0.30),
-                      child: SizedBox(
-                        height: 60,
-                        child: TextField(
-                          keyboardType: TextInputType.number,
-                          style: const TextStyle(
-                              fontSize: 18,
-                              letterSpacing: 5,
-                              fontWeight: FontWeight.w600),
-                          maxLength: 6,
-                          textAlign: TextAlign.center,
-                          controller: codeSMS,
-                          decoration: const InputDecoration(
-                              contentPadding: EdgeInsets.only(
-                                  left: 15, right: 10, top: 10, bottom: 10),
-                              border: OutlineInputBorder()),
-                        ),
-                      ),
+                    CircleAvatar(
+                      radius: 100,
+                      backgroundImage: NetworkImage(lc.photoUserLogged),
+                    ),
+                    const SizedBox(
+                      height: 30,
+                    ),
+                    TextField(
+                      textCapitalization: TextCapitalization.words,
+                      style: const TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.w600),
+                      controller: name,
+                      decoration: const InputDecoration(
+                          labelText: 'Seu nome',
+                          contentPadding: EdgeInsets.only(
+                              left: 15, right: 10, top: 10, bottom: 10),
+                          border: OutlineInputBorder()),
                     ),
                     const SizedBox(
                       height: 15,
@@ -73,13 +69,15 @@ class SMSCodeScreen extends StatelessWidget {
                           color: Colors.deepOrange),
                       child: TextButton(
                         child: const Text(
-                          'Avançar',
+                          'Salvar',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                         onPressed: () {
-                          lc.signInWithPhoneNumber(codeSMS.text).then((value) {
+                          lc
+                              .saveDataFirestore(name.text, lc.photoUserLogged)
+                              .then((value) {
                             if (lc.state.value == 'SUCCESS') {
-                              Get.off(() => UpdateProfileScreen());
+                              Get.off(() => HomeScreen());
                             }
                           });
                         },
@@ -87,7 +85,7 @@ class SMSCodeScreen extends StatelessWidget {
                     ),
                     Obx(() => lc.state.value == 'ERROR'
                         ? const Text(
-                            'Erro ao logar, tente novamente mais tarde!',
+                            'Erro ao atualizar seu perfil!',
                             style: TextStyle(
                                 color: Colors.red,
                                 fontSize: 18,
