@@ -186,7 +186,11 @@ class ChatScreen extends StatelessWidget {
         child: Row(
           children: [
             Expanded(
-              child: Container(
+              child: Stack(
+                fit: StackFit.passthrough,
+                
+                children: [
+                  Container(
                 width: 200,
                 margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
                 decoration: BoxDecoration(
@@ -208,11 +212,18 @@ class ChatScreen extends StatelessWidget {
                           hintText: 'Digite aqui...',
                           hintStyle:
                               TextStyle(color: Colors.white, fontSize: 18)),
+                    
                     ),
                   ),
                 ),
               ),
+              Container(
+                
+                child: const Icon(Icons.camera_alt))
+                ],
+              )
             ),
+            
             Container(
               margin: const EdgeInsets.only(right: 5),
               width: 48,

@@ -19,6 +19,7 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.chat),
         onPressed: () {
+          //con.tratarNumeros('+5561998575936');
           Get.to(() => ContactsScreen());
         },
       ),

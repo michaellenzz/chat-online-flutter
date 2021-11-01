@@ -51,10 +51,16 @@ class ContactController extends GetxController {
   }
 
   String tratarNumeros(number) {
+    // +5561998575936
     number = number.replaceAll('-', '');
     number = number.replaceAll(' ', '');
-    if (number.startsWith('+55')) return number;
-    if (number.startsWith('55')) return '+$number';
+
+    if (number.startsWith('+55') && number.length == 13){
+      return number.replaceRange(5, 6, '9');
+    } 
+
+    if (number.startsWith('+55') && number.length == 14) return number;
+    
     if (number.startsWith('0')) {
       number = number.replaceRange(0, 1, '');
       return '+55$number';
