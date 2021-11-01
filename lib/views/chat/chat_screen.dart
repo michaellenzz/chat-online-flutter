@@ -159,7 +159,7 @@ class ChatScreen extends StatelessWidget {
                                   const SizedBox(
                                     width: 5,
                                   ),
-                                  sender == lc.userLogged
+                                  sender == lc.userLogged.value
                                       ? Image.asset(
                                           'assets/images/double-tick.png',
                                           width: 18,

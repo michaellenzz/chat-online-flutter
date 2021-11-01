@@ -68,6 +68,7 @@ class ChatController extends GetxController {
         .update({'status': 'read'});
   }
 
+//TODO
   verifyPresense(bool online) {
     var time = Timestamp.now().toDate();
     var hour =

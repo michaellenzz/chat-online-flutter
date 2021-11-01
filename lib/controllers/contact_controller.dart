@@ -5,6 +5,8 @@ import 'package:get/get.dart';
 class ContactController extends GetxController {
   List<QueryDocumentSnapshot<Map<String, dynamic>>> contacts = [];
   List<String> phones = [];
+  int count = 0;
+  List<String> temPhones = []; //array com a combinação de 10 telefones
 
   @override
   void onInit() {
@@ -19,17 +21,31 @@ class ContactController extends GetxController {
         phones.add(tratarNumeros(n.value.toString()));
       }
     }
-    getContactDatabase();
+    separate10in10();
   }
 
-  getContactDatabase() async {
+  separate10in10() async{
+    if (phones.length > 10) {
+      for (int i = 0; i < phones.length; i++) {
+        temPhones.add(phones[i]);
+        if (temPhones.length == 10) {
+          await getContactDatabase(temPhones);
+          temPhones.clear();
+        }
+      }
+    } else {
+      getContactDatabase(phones);
+    }
+  }
+
+  getContactDatabase(n) async {
     await FirebaseFirestore.instance
         .collection('users')
         .orderBy('name')
-        .where('phone', whereIn: phones)
+        .where('phone', whereIn: n)
         .snapshots()
         .forEach((element) {
-      contacts = element.docs;
+      contacts.addAll(element.docs);
       update();
     });
   }

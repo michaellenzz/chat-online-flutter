@@ -3,7 +3,6 @@ import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
 
 class LoginController extends GetxController {
-  
   final _auth = FirebaseAuth.instance;
   RxBool estaLogado = false.obs;
   RxString state = 'A LOGAR'.obs;
@@ -23,7 +22,7 @@ class LoginController extends GetxController {
 
   @override
   void onInit() {
-    _auth.setLanguageCode("br");
+    _auth.setLanguageCode("pt-br");
     verificarLogado();
     super.onInit();
   }
@@ -33,15 +32,15 @@ class LoginController extends GetxController {
     if (user != null) {
       estaLogado.value = true;
       userLogged.value = user.phoneNumber!;
-      nameUserLogged = user.displayName; 
+      nameUserLogged = user.displayName;
     } else {
       estaLogado.value = false;
     }
   }
 
-  
-
   Future verifyPhone(phoneNumber) async {
+    //RecaptchaVerifier r = RecaptchaVerifier();
+
     userLogged.value = phoneNumber;
     //state.value = 'LOADING';
     await _auth.verifyPhoneNumber(
@@ -101,7 +100,11 @@ class LoginController extends GetxController {
     }).then((value) {
       state.value = 'SUCCESS';
       _auth.currentUser!.updateDisplayName(name);
-      nameUserLogged = name; 
+      nameUserLogged = name;
     });
+  }
+
+  signOut() async {
+    await _auth.signOut();
   }
 }

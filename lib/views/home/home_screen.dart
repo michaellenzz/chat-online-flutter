@@ -3,6 +3,7 @@ import 'package:chat_online_flutter/controllers/contact_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/views/chat/chat_screen.dart';
 import 'package:chat_online_flutter/views/contactsscreen/contacts_screen.dart';
+import 'package:chat_online_flutter/views/login/login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -24,6 +25,14 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chat Flutter'),
         centerTitle: true,
+        actions: [
+          IconButton(
+              onPressed: () {
+                lc.signOut();
+                Get.off(() => LoginScreen());
+              },
+              icon: const Icon(Icons.exit_to_app))
+        ],
       ),
       body: Container(
           padding: const EdgeInsets.all(10),
