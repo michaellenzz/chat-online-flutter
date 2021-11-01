@@ -189,6 +189,7 @@ class ChatScreen extends StatelessWidget {
               child: Stack(
                 fit: StackFit.passthrough,
                 
+                
                 children: [
                   Container(
                 width: 200,
@@ -217,9 +218,11 @@ class ChatScreen extends StatelessWidget {
                   ),
                 ),
               ),
-              Container(
-                
+              Positioned(
+                right: 15,
+                bottom: 15,
                 child: const Icon(Icons.camera_alt))
+              
                 ],
               )
             ),
