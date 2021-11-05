@@ -8,7 +8,7 @@ class ContactsScreen extends StatelessWidget {
   ContactsScreen({Key? key}) : super(key: key);
 
   final LoginController lc = Get.put(LoginController());
-  final ContactController con = Get.put(ContactController());
+  //final ContactController con = Get.put(ContactController());
 
   @override
   Widget build(BuildContext context) {
@@ -42,7 +42,7 @@ class ContactsScreen extends StatelessWidget {
           builder: (value) => ListView.builder(
             itemCount: value.contacts.length,
             itemBuilder: (c, i) {
-              if (value.contacts.isEmpty) {
+              if (value.state.value == 'loading') {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );

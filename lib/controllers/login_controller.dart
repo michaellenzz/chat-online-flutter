@@ -1,6 +1,7 @@
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:get/get.dart';
+import 'package:onesignal_flutter/onesignal_flutter.dart';
 
 class LoginController extends GetxController {
   final _auth = FirebaseAuth.instance;
@@ -12,11 +13,13 @@ class LoginController extends GetxController {
 
   String? nameUserLogged = '';
   String photoUserLogged =
-      //'https://i.pinimg.com/originals/56/2e/fc/562efc6231a0b03e13ea715ae1ad9f1c.png';
-      'https://st2.depositphotos.com/3433891/6661/i/600/depositphotos_66613339-stock-photo-man-with-crossed-arms.jpg';
+      'https://i.pinimg.com/originals/56/2e/fc/562efc6231a0b03e13ea715ae1ad9f1c.png';
+  //'https://st2.depositphotos.com/3433891/6661/i/600/depositphotos_66613339-stock-photo-man-with-crossed-arms.jpg';
 
   //dados do amigo
   String friendSelected = '';
+  String nameFriend = '';
+  String playerId = '';
   String photoFriend = '';
   String statusFriend = '';
 
@@ -73,18 +76,16 @@ class LoginController extends GetxController {
         smsCode: codeSMS,
       );
 
-      final User? user = (await _auth.signInWithCredential(credential)).user;
+      await _auth.signInWithCredential(credential);
 
-      print("Successfully signed in UID: ${user!.uid}");
       state.value = 'SUCCESS';
       estaLogado.value = true;
     } catch (e) {
-      print("Failed to sign in: " + e.toString());
       state.value = 'ERROR';
     }
   }
 
-  Future saveDataFirestore(name, photoURL) async {
+  Future saveDataFirestore(name, photoURL, recado) async {
     state.value = 'LOADING';
     await FirebaseFirestore.instance
         .collection('users')
@@ -93,8 +94,9 @@ class LoginController extends GetxController {
       'phone': userLogged.value,
       'name': name,
       'photo': photoURL,
-      'phrase': 'Olá, eu estou usando Flutter Chat',
-      'status': 'Online'
+      'phrase': recado,
+      'status': 'Online',
+      'playerId': await getPlayerId()
     }).catchError((e) {
       state.value = 'ERROR';
     }).then((value) {
@@ -102,6 +104,11 @@ class LoginController extends GetxController {
       _auth.currentUser!.updateDisplayName(name);
       nameUserLogged = name;
     });
+  }
+
+  Future<String?> getPlayerId() async {
+    final status = await OneSignal.shared.getDeviceState();
+    return status?.userId;
   }
 
   signOut() async {

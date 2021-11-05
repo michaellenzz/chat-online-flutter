@@ -1,4 +1,5 @@
 import 'package:chat_online_flutter/controllers/login_controller.dart';
+import 'package:chat_online_flutter/controllers/notification_controller.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:get/get.dart';
 
@@ -6,8 +7,8 @@ class ChatController extends GetxController {
   List<QueryDocumentSnapshot<Map<String, dynamic>>> messages = [];
   List<QueryDocumentSnapshot<Map<String, dynamic>>> chats = [];
 
-
   LoginController lc = Get.put(LoginController());
+  NotificationController nc = Get.put(NotificationController());
 
   @override
   void onInit() {
@@ -16,7 +17,6 @@ class ChatController extends GetxController {
     if (lc.userLogged.value.isNotEmpty) {
       getMessages();
       getChats();
-      getStatusFriend();
     }
 
     super.onInit();
@@ -56,6 +56,8 @@ class ChatController extends GetxController {
           .forEach((value) {
         lc.statusFriend = value.data()!['status'];
         lc.photoFriend = value.data()!['photo'];
+        lc.nameFriend = value.data()!['name'];
+        lc.playerId = value.data()!['playerId'];
         update();
       });
     }
@@ -68,7 +70,6 @@ class ChatController extends GetxController {
         .update({'status': 'read'});
   }
 
-//TODO
   verifyPresense(bool online) {
     var time = Timestamp.now().toDate();
     var hour =
@@ -79,25 +80,27 @@ class ChatController extends GetxController {
         .update({'status': online ? 'online' : 'Visto por último às $hour'});
   }
 
-  sendMessages(message, friend) async {
+  sendMessages(friend, {urlFile, message, reference, extension}) async {
     await FirebaseFirestore.instance.collection('messages').doc().set({
       'status': 'unread',
+      'type': extension ?? 'message',
       'sender': lc.userLogged.value,
+      'refStorage': reference,
       'message': message,
+      'urlFile': urlFile,
       'time': Timestamp.now(),
       'chatId': [lc.userLogged.value, lc.friendSelected]
     });
-
     await FirebaseFirestore.instance
         .collection('users')
         .doc(lc.userLogged.value)
         .collection('chats')
         .doc(lc.friendSelected)
         .set({
-      'lastMessage': message,
+      'lastMessage': message ?? 'Imagem',
       'lastTime': Timestamp.now(),
-      'name': friend['name'],
-      'photo': friend['photo']
+      'name': lc.nameFriend,
+      'photo': lc.photoFriend
     }, SetOptions(merge: true));
 
     await FirebaseFirestore.instance
@@ -106,10 +109,13 @@ class ChatController extends GetxController {
         .collection('chats')
         .doc(lc.userLogged.value)
         .set({
-      'lastMessage': message,
+      'lastMessage': message ?? 'Imagem',
       'lastTime': Timestamp.now(),
       'name': lc.nameUserLogged,
       'photo': lc.photoUserLogged
     }, SetOptions(merge: true));
+
+    nc.sendNotification(
+        lc.playerId, lc.nameUserLogged, lc.photoUserLogged, message, photo: extension == 'jpg' ? urlFile : '');
   }
 }

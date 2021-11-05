@@ -3,15 +3,17 @@ import 'package:chat_online_flutter/controllers/contact_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/views/chat/chat_screen.dart';
 import 'package:chat_online_flutter/views/contactsscreen/contacts_screen.dart';
-import 'package:chat_online_flutter/views/login/login_screen.dart';
+import 'package:chat_online_flutter/views/profile/profile_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatelessWidget {
   HomeScreen({Key? key}) : super(key: key);
 
   final LoginController lc = Get.put(LoginController());
   final ContactController con = Get.put(ContactController());
+  final ChatController cc = Get.put(ChatController());
 
   @override
   Widget build(BuildContext context) {
@@ -19,8 +21,13 @@ class HomeScreen extends StatelessWidget {
       floatingActionButton: FloatingActionButton(
         child: const Icon(Icons.chat),
         onPressed: () {
-          //con.tratarNumeros('+5561998575936');
-          Get.to(() => ContactsScreen());
+          getPermissionDevice().then((permission) {
+            if (permission == true) {
+              con.contacts.clear();
+              con.getContactDevice();
+              Get.to(() => ContactsScreen());
+            }
+          });
         },
       ),
       appBar: AppBar(
@@ -29,10 +36,10 @@ class HomeScreen extends StatelessWidget {
         actions: [
           IconButton(
               onPressed: () {
-                lc.signOut();
-                Get.off(() => LoginScreen());
+                //lc.signOut();
+                Get.to(() => ProfileScreen());
               },
-              icon: const Icon(Icons.exit_to_app))
+              icon: const Icon(Icons.person))
         ],
       ),
       body: Container(
@@ -50,9 +57,9 @@ class HomeScreen extends StatelessWidget {
                     var time = value.chats[i].data()['lastTime'].toDate();
                     return InkWell(
                       onTap: () {
-                        //cc.getMessages();
                         lc.friendSelected = value.chats[i].id;
                         Get.to(() => ChatScreen(value.chats[i]));
+                        cc.getStatusFriend();
                       },
                       child: Column(
                         children: [
@@ -124,5 +131,20 @@ class HomeScreen extends StatelessWidget {
                 }),
           )),
     );
+  }
+
+  Future<bool> getPermissionDevice() async {
+    if (await Permission.contacts.request().isGranted) {
+      // Either the permission was already granted before or the user just granted it.
+      return true;
+    }
+    Map<Permission, PermissionStatus> statuses = await [
+      Permission.contacts,
+    ].request();
+    if (statuses[Permission.contacts] == PermissionStatus.granted) {
+      return true;
+    } else {
+      return false;
+    }
   }
 }

@@ -1,6 +1,10 @@
 import 'package:bubble/bubble.dart';
 import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
+import 'package:chat_online_flutter/controllers/upload_controller.dart';
+import 'package:chat_online_flutter/views/chat/botton_send.dart';
+import 'package:chat_online_flutter/views/chat/field_message.dart';
+import 'package:chat_online_flutter/views/chat/media_view_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -17,11 +21,13 @@ class ChatScreen extends StatelessWidget {
 
   final ChatController cc = Get.put(ChatController());
   final LoginController lc = Get.put(LoginController());
+  final UploadController uc = Get.put(UploadController());
 
   List<String> messagesUnread = [];
 
   @override
   Widget build(BuildContext context) {
+    double width = MediaQuery.of(context).size.width;
     return Scaffold(
       appBar: AppBar(
         leading: InkWell(
@@ -68,7 +74,7 @@ class ChatScreen extends StatelessWidget {
                     style: const TextStyle(fontSize: 20),
                   ),
                   //mostrar presença do amigo
-                  /*TODO
+                  /*
                   GetBuilder<ChatController>(
                     init: ChatController(),
                     builder: (value) => value.statusFriend.isEmpty
@@ -132,15 +138,45 @@ class ChatScreen extends StatelessWidget {
                           children: [
                             Flexible(
                               child: Padding(
-                                padding:
-                                    const EdgeInsets.symmetric(vertical: 8),
-                                child: Text(
-                                  value.messages[i].data()['message'],
-                                  style: const TextStyle(
-                                      fontSize: 18,
-                                      fontWeight: FontWeight.w500),
-                                ),
-                              ),
+                                  padding:
+                                      const EdgeInsets.symmetric(vertical: 8),
+                                  child: value.messages[i].data()['type'] ==
+                                          'message'
+                                      ? Text(
+                                          value.messages[i].data()['message'],
+                                          style: const TextStyle(
+                                              fontSize: 18,
+                                              fontWeight: FontWeight.w500),
+                                        )
+                                      : value.messages[i].data()['type'] ==
+                                              'jpg'
+                                          ? InkWell(
+                                              child: Image.network(value
+                                                  .messages[i]
+                                                  .data()['urlFile']),
+                                              onTap: () {
+                                                Get.to(() => MediaViewScreen(
+                                                    value.messages[i].data()));
+                                              },
+                                            )
+                                          : InkWell(
+                                            child: InkWell(
+                                              child: Container(
+                                                  color: Colors.orange[50],
+                                                  width: width * 0.6,
+                                                  height: width * 0.6,
+                                                  child: const Icon(
+                                                    Icons.play_circle_outline,
+                                                    size: 60,
+                                                    color: Colors.orange,
+                                                  ),
+                                                ),
+                                                onTap: (){
+                                                  Get.to(() => MediaViewScreen(
+                                                    value.messages[i].data()));
+                                                },
+                                            ),
+                                          )),
                             ),
                             const SizedBox(
                               width: 8,
@@ -184,70 +220,7 @@ class ChatScreen extends StatelessWidget {
       bottomSheet: Container(
         color: Colors.yellow.withAlpha(40),
         child: Row(
-          children: [
-            Expanded(
-              child: Stack(
-                fit: StackFit.passthrough,
-                
-                
-                children: [
-                  Container(
-                width: 200,
-                margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
-                decoration: BoxDecoration(
-                    borderRadius: BorderRadius.circular(30),
-                    color: Colors.deepOrangeAccent[100]),
-                child: SizedBox(
-                  width: 200,
-                  child: ConstrainedBox(
-                    constraints: const BoxConstraints(maxHeight: 150),
-                    child: TextField(
-                      maxLines: null,
-                      controller: mensagem,
-                      textCapitalization: TextCapitalization.sentences,
-                      style: const TextStyle(fontSize: 19, color: Colors.black),
-                      decoration: const InputDecoration(
-                          contentPadding: EdgeInsets.only(
-                              left: 15, right: 10, top: 10, bottom: 10),
-                          border: InputBorder.none,
-                          hintText: 'Digite aqui...',
-                          hintStyle:
-                              TextStyle(color: Colors.white, fontSize: 18)),
-                    
-                    ),
-                  ),
-                ),
-              ),
-              Positioned(
-                right: 15,
-                bottom: 15,
-                child: const Icon(Icons.camera_alt))
-              
-                ],
-              )
-            ),
-            
-            Container(
-              margin: const EdgeInsets.only(right: 5),
-              width: 48,
-              height: 48,
-              decoration: BoxDecoration(
-                  color: Colors.deepOrangeAccent,
-                  borderRadius: BorderRadius.circular(30)),
-              child: IconButton(
-                  splashRadius: 23,
-                  onPressed: () {
-                    if (mensagem.text.isNotEmpty) {
-                      cc.sendMessages(mensagem.text, user.data());
-                      mensagem.clear();
-                    }
-                  },
-                  icon: const Icon(
-                    Icons.send,
-                    color: Colors.white,
-                  )),
-            )
-          ],
+          children: [FieldMessage(mensagem, user), BottonSend(mensagem, user)],
         ),
       ),
     );

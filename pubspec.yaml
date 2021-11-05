@@ -21,6 +21,12 @@ dependencies:
   contacts_service: ^0.6.3
   intl_phone_number_input: ^0.7.0+2
   firebase_auth: ^3.1.4
+  images_picker: ^1.2.5
+  firebase_storage: ^10.0.6
+  video_player: ^2.2.6
+  permission_handler: ^8.2.6
+  onesignal_flutter: ^3.2.3
+  firebase_messaging: ^10.0.8
 
 
 dev_dependencies:
