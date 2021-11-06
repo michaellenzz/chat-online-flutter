@@ -37,7 +37,7 @@ class LoginScreen extends StatelessWidget {
                       style: TextStyle(
                           fontSize: 20,
                           fontWeight: FontWeight.w600,
-                          color: Colors.deepOrange),
+                          color: Color(0xFF7cc6fe)),
                       textAlign: TextAlign.center,
                     ),
                     const SizedBox(
@@ -83,7 +83,7 @@ class LoginScreen extends StatelessWidget {
                       height: 40,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.deepOrange),
+                          color: Theme.of(context).primaryColor),
                       child: TextButton(
                         child: const Text(
                           'Avançar',

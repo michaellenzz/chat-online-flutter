@@ -58,6 +58,7 @@ class ChatController extends GetxController {
         lc.photoFriend = value.data()!['photo'];
         lc.nameFriend = value.data()!['name'];
         lc.playerId = value.data()!['playerId'];
+        lc.recado = value.data()!['phrase'];
         update();
       });
     }

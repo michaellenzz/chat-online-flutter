@@ -139,14 +139,15 @@ class UpdateProfileScreen extends StatelessWidget {
                       width: 200,
                       decoration: BoxDecoration(
                           borderRadius: BorderRadius.circular(8),
-                          color: Colors.deepOrange),
+                          color: Theme.of(context).primaryColor),
                       child: TextButton(
                         child: const Text(
                           'Salvar',
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                         onPressed: () {
-                          lc
+                          if(name.text.isNotEmpty){
+                            lc
                               .saveDataFirestore(
                             name.text,
                             lc.photoUserLogged,
@@ -157,6 +158,7 @@ class UpdateProfileScreen extends StatelessWidget {
                               Get.off(() => HomeScreen());
                             }
                           });
+                          }
                         },
                       ),
                     ),

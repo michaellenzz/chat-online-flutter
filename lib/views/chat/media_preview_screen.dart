@@ -76,14 +76,14 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
               ),
       ),
       bottomSheet: Container(
-        color: Colors.yellow.withAlpha(40),
+        color: Theme.of(context).primaryColor,
         child: Row(
           mainAxisAlignment: MainAxisAlignment.spaceEvenly,
           children: [
             TextButton(
               child: const Text(
                 'Cancelar',
-                style: TextStyle(fontSize: 18),
+                style: TextStyle(fontSize: 18, color: Colors.white),
               ),
               onPressed: () {
                 Get.back();
@@ -92,7 +92,7 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
             TextButton(
                 child: const Text(
                   'Enviar',
-                  style: TextStyle(fontSize: 18),
+                  style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 onPressed: () {
                   uc.uploadFile(widget.medias, extension, widget.user).then((value) {

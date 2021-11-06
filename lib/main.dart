@@ -1,8 +1,6 @@
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/views/home/home_screen.dart';
 import 'package:chat_online_flutter/views/login/login_screen.dart';
-import 'package:chat_online_flutter/views/profile/profile_screen.dart';
-import 'package:chat_online_flutter/views/profile/update_profile_screen.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -14,6 +12,7 @@ void main() async {
   runApp(MyApp());
 }
 
+// ignore: must_be_immutable
 class MyApp extends StatelessWidget {
   MyApp({Key? key}) : super(key: key);
 
@@ -30,8 +29,21 @@ class MyApp extends StatelessWidget {
         debugShowCheckedModeBanner: false,
         title: 'Flutter Chat',
         theme: ThemeData(
-          primarySwatch: Colors.deepOrange,
-        ),
+            primarySwatch: MaterialColor(0xFFb3dec1, color),
+            primaryColor: MaterialColor(0xFFb3dec1, color)),
         home: lc.estaLogado.value ? HomeScreen() : LoginScreen());
   }
+
+  Map<int, Color> color = {
+    50: const Color.fromRGBO(136, 14, 79, .1),
+    100: const Color.fromRGBO(136, 14, 79, .2),
+    200: const Color.fromRGBO(136, 14, 79, .3),
+    300: const Color.fromRGBO(136, 14, 79, .4),
+    400: const Color.fromRGBO(136, 14, 79, .5),
+    500: const Color.fromRGBO(136, 14, 79, .6),
+    600: const Color.fromRGBO(136, 14, 79, .7),
+    700: const Color.fromRGBO(136, 14, 79, .8),
+    800: const Color.fromRGBO(136, 14, 79, .9),
+    900: const Color.fromRGBO(136, 14, 79, 1),
+  };
 }

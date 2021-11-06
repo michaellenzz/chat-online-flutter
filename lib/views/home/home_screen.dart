@@ -3,7 +3,7 @@ import 'package:chat_online_flutter/controllers/contact_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/views/chat/chat_screen.dart';
 import 'package:chat_online_flutter/views/contactsscreen/contacts_screen.dart';
-import 'package:chat_online_flutter/views/profile/profile_screen.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
@@ -19,6 +19,7 @@ class HomeScreen extends StatelessWidget {
   Widget build(BuildContext context) {
     return Scaffold(
       floatingActionButton: FloatingActionButton(
+        backgroundColor: const Color(0xffb3dec1),
         child: const Icon(Icons.chat),
         onPressed: () {
           getPermissionDevice().then((permission) {
@@ -33,14 +34,6 @@ class HomeScreen extends StatelessWidget {
       appBar: AppBar(
         title: const Text('Chat Flutter'),
         centerTitle: true,
-        actions: [
-          IconButton(
-              onPressed: () {
-                //lc.signOut();
-                Get.to(() => ProfileScreen());
-              },
-              icon: const Icon(Icons.person))
-        ],
       ),
       body: Container(
           padding: const EdgeInsets.all(10),
@@ -81,8 +74,10 @@ class HomeScreen extends StatelessWidget {
                                     )
                                   : CircleAvatar(
                                       radius: 25,
-                                      backgroundImage: NetworkImage(
-                                          value.chats[i].data()['photo']),
+                                      backgroundImage:
+                                          ExtendedNetworkImageProvider(
+                                              value.chats[i].data()['photo'],
+                                              cache: true),
                                     ),
                               Expanded(
                                 child: Padding(

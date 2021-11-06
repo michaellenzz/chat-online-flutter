@@ -18,7 +18,7 @@ class BottonSend extends StatelessWidget {
       width: 48,
       height: 48,
       decoration: BoxDecoration(
-          color: Colors.deepOrangeAccent,
+          color: Theme.of(context).primaryColor,
           borderRadius: BorderRadius.circular(30)),
       child: IconButton(
           splashRadius: 23,

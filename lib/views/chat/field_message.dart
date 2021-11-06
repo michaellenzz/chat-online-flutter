@@ -24,7 +24,7 @@ class FieldMessage extends StatelessWidget {
           margin: const EdgeInsets.fromLTRB(5, 0, 5, 5),
           decoration: BoxDecoration(
               borderRadius: BorderRadius.circular(30),
-              color: Colors.deepOrangeAccent[100]),
+              color: Theme.of(context).primaryColor),
           child: SizedBox(
             width: 200,
             child: ConstrainedBox(

@@ -5,6 +5,8 @@ import 'package:chat_online_flutter/controllers/upload_controller.dart';
 import 'package:chat_online_flutter/views/chat/botton_send.dart';
 import 'package:chat_online_flutter/views/chat/field_message.dart';
 import 'package:chat_online_flutter/views/chat/media_view_screen.dart';
+import 'package:chat_online_flutter/views/profile/profile_screen.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
@@ -58,41 +60,49 @@ class ChatScreen extends StatelessWidget {
                     )
                   : CircleAvatar(
                       radius: 22,
-                      backgroundImage: NetworkImage(user.data()['photo']),
+                      backgroundImage: ExtendedNetworkImageProvider(
+                          user.data()['photo'],
+                          cache: true),
                     ),
               onTap: () {
                 Get.back();
               },
             ),
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: 8),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text(
-                    user.data()['name'],
-                    style: const TextStyle(fontSize: 20),
-                  ),
-                  //mostrar presença do amigo
-                  /*
-                  GetBuilder<ChatController>(
-                    init: ChatController(),
-                    builder: (value) => value.statusFriend.isEmpty
-                        ? Container()
-                        : Text(
-                            value.statusFriend,
-                            style: const TextStyle(fontSize: 13),
-                          ),
-                  )
-                  */
-                ],
+            InkWell(
+              onTap: () {
+                Get.to(() => ProfileScreen(lc.friendSelected, lc.photoFriend,
+                    lc.recado, lc.nameFriend));
+              },
+              child: Padding(
+                padding: const EdgeInsets.symmetric(horizontal: 8),
+                child: Column(
+                  crossAxisAlignment: CrossAxisAlignment.start,
+                  children: [
+                    Text(
+                      user.data()['name'],
+                      style: const TextStyle(fontSize: 20),
+                    ),
+                    //mostrar presença do amigo
+                    /*
+                    GetBuilder<ChatController>(
+                      init: ChatController(),
+                      builder: (value) => value.statusFriend.isEmpty
+                          ? Container()
+                          : Text(
+                              value.statusFriend,
+                              style: const TextStyle(fontSize: 13),
+                            ),
+                    )
+                    */
+                  ],
+                ),
               ),
             )
           ],
         ),
       ),
       body: Container(
-          color: Colors.yellow.withAlpha(40),
+          color: Colors.white,
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 57),
           //pa: const EdgeInsets.only(bottom: 56),
           child: GetBuilder<ChatController>(
@@ -130,8 +140,8 @@ class ChatScreen extends StatelessWidget {
                             ? BubbleNip.rightBottom
                             : BubbleNip.leftTop,
                         color: sender == lc.userLogged.value
-                            ? const Color.fromRGBO(255, 255, 255, 100)
-                            : const Color(0xFFfff291),
+                            ? const Color(0xFFd4ecdc)
+                            : const Color(0xFFd7d8ea),
                         child: Row(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.end,
@@ -151,32 +161,38 @@ class ChatScreen extends StatelessWidget {
                                       : value.messages[i].data()['type'] ==
                                               'jpg'
                                           ? InkWell(
-                                              child: Image.network(value
-                                                  .messages[i]
-                                                  .data()['urlFile']),
+                                              child: ExtendedImage.network(
+                                                value.messages[i]
+                                                    .data()['urlFile'],
+                                                fit: BoxFit.fill,
+                                                cache: true,
+                                                handleLoadingProgress: true,
+                                              ),
                                               onTap: () {
                                                 Get.to(() => MediaViewScreen(
                                                     value.messages[i].data()));
                                               },
                                             )
                                           : InkWell(
-                                            child: InkWell(
-                                              child: Container(
-                                                  color: Colors.orange[50],
+                                              child: InkWell(
+                                                child: Container(
+                                                  color: Colors.white,
                                                   width: width * 0.6,
                                                   height: width * 0.6,
-                                                  child: const Icon(
+                                                  child: Icon(
                                                     Icons.play_circle_outline,
                                                     size: 60,
-                                                    color: Colors.orange,
+                                                    color: Theme.of(context)
+                                                        .primaryColor,
                                                   ),
                                                 ),
-                                                onTap: (){
+                                                onTap: () {
                                                   Get.to(() => MediaViewScreen(
-                                                    value.messages[i].data()));
+                                                      value.messages[i]
+                                                          .data()));
                                                 },
-                                            ),
-                                          )),
+                                              ),
+                                            )),
                             ),
                             const SizedBox(
                               width: 8,
@@ -218,7 +234,7 @@ class ChatScreen extends StatelessWidget {
                 }),
           )),
       bottomSheet: Container(
-        color: Colors.yellow.withAlpha(40),
+        color: Colors.white,
         child: Row(
           children: [FieldMessage(mensagem, user), BottonSend(mensagem, user)],
         ),

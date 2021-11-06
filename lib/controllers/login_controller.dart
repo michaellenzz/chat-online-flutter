@@ -12,16 +12,14 @@ class LoginController extends GetxController {
   String verificId = '';
 
   String? nameUserLogged = '';
-  String photoUserLogged =
-      'https://i.pinimg.com/originals/56/2e/fc/562efc6231a0b03e13ea715ae1ad9f1c.png';
-  //'https://st2.depositphotos.com/3433891/6661/i/600/depositphotos_66613339-stock-photo-man-with-crossed-arms.jpg';
-
+  String photoUserLogged = '';
   //dados do amigo
   String friendSelected = '';
   String nameFriend = '';
   String playerId = '';
   String photoFriend = '';
   String statusFriend = '';
+  String recado = '';
 
   @override
   void onInit() {
@@ -36,13 +34,14 @@ class LoginController extends GetxController {
       estaLogado.value = true;
       userLogged.value = user.phoneNumber!;
       nameUserLogged = user.displayName;
+      photoUserLogged = user.photoURL ?? '';
     } else {
       estaLogado.value = false;
     }
   }
 
   Future verifyPhone(phoneNumber) async {
-    //RecaptchaVerifier r = RecaptchaVerifier();
+    
 
     userLogged.value = phoneNumber;
     //state.value = 'LOADING';
@@ -102,6 +101,8 @@ class LoginController extends GetxController {
     }).then((value) {
       state.value = 'SUCCESS';
       _auth.currentUser!.updateDisplayName(name);
+      _auth.currentUser!.updatePhotoURL(photoUserLogged);
+
       nameUserLogged = name;
     });
   }
