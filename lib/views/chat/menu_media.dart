@@ -2,12 +2,13 @@ import 'package:chat_online_flutter/views/chat/media_preview_screen.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:images_picker/images_picker.dart';
+import 'package:image_picker/image_picker.dart';
 
 class MenuMedia {
   // ignore: prefer_typing_uninitialized_variables
   var user;
   MenuMedia(this.user);
+  final ImagePicker _picker = ImagePicker();
 
   showMenuMidia(context) {
     final RenderBox button = context.findRenderObject() as RenderBox;
@@ -21,7 +22,7 @@ class MenuMedia {
           button.size.bottomRight(Offset.zero) + const Offset(0, 300),
         ),
       ),
-      Offset.zero & const Size(200, 200),
+      Offset.zero & const Size(50, -65),
     );
 
     showMenu(
@@ -40,45 +41,77 @@ class MenuMedia {
               IconButton(
                   onPressed: () async {
                     Get.back();
-                    var medias = await ImagesPicker.pick(
-                      pickType: PickType.all,
-                      language: Language.System,
-                      count: 5,
-                      quality: 0.6,
-                    );
-                    if (medias != null) {
-                      Get.to(() => MediaPreviewScreen(medias, user));
+                    List<XFile>? photos = await _picker.pickMultiImage(
+                        imageQuality: 70, maxHeight: 1500, maxWidth: 1500);
+
+                    if (photos != null) {
+                      Get.to(() => MediaPreviewScreen(photos, user));
                     }
                   },
-                  icon: const Icon(Icons.photo_rounded)),
+                  icon: const Icon(
+                    Icons.photo_rounded,
+                    size: 30,
+                    color: Color(0xFF7CC6FE),
+                  )),
               IconButton(
                   onPressed: () async {
                     Get.back();
-                    var medias = await ImagesPicker.openCamera(
-                      pickType: PickType.image,
-                      language: Language.System,
-                      quality: 0.6,
-                    );
-                    if (medias != null) {
-                      Get.to(() => MediaPreviewScreen(medias, user));
+                    final XFile? video = await _picker.pickVideo(
+                        source: ImageSource.gallery,
+                        preferredCameraDevice: CameraDevice.front,
+                        maxDuration: const Duration(minutes: 4));
+
+                    List<XFile?> temp = [];
+                    temp.add(video);
+                    if (video != null) {
+                      Get.to(() => MediaPreviewScreen(temp, user));
                     }
                   },
-                  icon: const Icon(Icons.camera_alt)),
+                  icon: const Icon(
+                    Icons.video_camera_back_rounded,
+                    size: 33,
+                    color: Color(0xFF7CC6FE),
+                  )),
               IconButton(
                   onPressed: () async {
                     Get.back();
-                    var medias = await ImagesPicker.openCamera(
-                      pickType: PickType.video,
-                      language: Language.System,
-                      quality: 0.6,
-                      maxTime: 30,
-                      maxSize: 20000,
-                    );
-                    if (medias != null) {
-                      Get.to(() => MediaPreviewScreen(medias, user));
+                    final XFile? photo = await _picker.pickImage(
+                        source: ImageSource.camera,
+                        preferredCameraDevice: CameraDevice.front,
+                        imageQuality: 70,
+                        maxHeight: 1500,
+                        maxWidth: 1500);
+
+                    List<XFile?> temp = [];
+                    temp.add(photo);
+                    if (photo != null) {
+                      Get.to(() => MediaPreviewScreen(temp, user));
                     }
                   },
-                  icon: const Icon(Icons.videocam_rounded)),
+                  icon: const Icon(
+                    Icons.camera_alt,
+                    size: 30,
+                    color: Color(0xFF7CC6FE),
+                  )),
+              IconButton(
+                  onPressed: () async {
+                    Get.back();
+                    final XFile? photo = await _picker.pickVideo(
+                        source: ImageSource.camera,
+                        maxDuration: const Duration(seconds: 30),
+                        preferredCameraDevice: CameraDevice.front);
+
+                    List<XFile?> temp = [];
+                    temp.add(photo);
+                    if (photo != null) {
+                      Get.to(() => MediaPreviewScreen(temp, user));
+                    }
+                  },
+                  icon: const Icon(
+                    Icons.videocam_rounded,
+                    size: 35,
+                    color: Color(0xFF7CC6FE),
+                  )),
             ],
           ),
         )

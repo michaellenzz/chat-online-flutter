@@ -1,3 +1,5 @@
+import 'package:chewie/chewie.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:video_player/video_player.dart';
 
@@ -12,16 +14,23 @@ class MediaViewScreen extends StatefulWidget {
 
 class _MediaViewScreenState extends State<MediaViewScreen> {
   late VideoPlayerController _controller;
+  // ignore: prefer_typing_uninitialized_variables
+  late final chewieController;
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.network(widget.media['urlFile'])
-      ..initialize().then((_) {
-        setState(() {
-          _controller.play();
-        });
-      });
+    final videoPlayerController =
+        VideoPlayerController.network(widget.media['urlFile']);
+
+    videoPlayerController.initialize();
+
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+    );
+
   }
 
   @override
@@ -36,18 +45,24 @@ class _MediaViewScreenState extends State<MediaViewScreen> {
         child: SizedBox(
             width: width,
             child: widget.media['type'] == 'jpg'
-                ? Image.network(widget.media['urlFile'])
-                : InkWell(
-                    child: VideoPlayer(_controller),
-                    onTap: () {
-                      setState(() {
-                        _controller.value.isPlaying
-                            ? _controller.pause()
-                            : _controller.play();
-                      });
-                    },
+                ? ExtendedImage.network(
+                    widget.media['urlFile'],
+                    fit: BoxFit.fill,
+                    cache: true,
+                    handleLoadingProgress: true,
+                  )
+                : Chewie(
+                    controller: chewieController,
                   )),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    chewieController.dispose();
+
+    super.dispose();
   }
 }

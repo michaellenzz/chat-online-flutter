@@ -41,8 +41,6 @@ class LoginController extends GetxController {
   }
 
   Future verifyPhone(phoneNumber) async {
-    
-
     userLogged.value = phoneNumber;
     //state.value = 'LOADING';
     await _auth.verifyPhoneNumber(
@@ -85,6 +83,7 @@ class LoginController extends GetxController {
   }
 
   Future saveDataFirestore(name, photoURL, recado) async {
+    _auth.currentUser!.updatePhotoURL(photoURL);
     state.value = 'LOADING';
     await FirebaseFirestore.instance
         .collection('users')

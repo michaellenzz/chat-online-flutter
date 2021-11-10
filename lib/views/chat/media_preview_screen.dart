@@ -1,5 +1,6 @@
 import 'dart:io';
 import 'package:chat_online_flutter/controllers/upload_controller.dart';
+import 'package:chewie/chewie.dart';
 import 'package:video_player/video_player.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter/rendering.dart';
@@ -22,16 +23,24 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
   final controller = PageController();
   final description = TextEditingController();
   late VideoPlayerController _controller;
+  // ignore: prefer_typing_uninitialized_variables
+  late final chewieController;
   UploadController uc = Get.put(UploadController());
   String extension = '';
 
   @override
   void initState() {
     super.initState();
-    _controller = VideoPlayerController.file(File(widget.medias[0].path))
-      ..initialize().then((_) {
-        setState(() {});
-      });
+    final videoPlayerController =
+        VideoPlayerController.network(widget.medias[0].path);
+
+    videoPlayerController.initialize();
+
+    chewieController = ChewieController(
+      videoPlayerController: videoPlayerController,
+      autoPlay: true,
+      looping: true,
+    );
   }
 
   @override
@@ -57,15 +66,9 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                   return SizedBox(
                     width: width,
                     child: extension == 'mp4'
-                        ? InkWell(
-                            onTap: () {
-                              setState(() {
-                                _controller.value.isPlaying
-                                    ? _controller.pause()
-                                    : _controller.play();
-                              });
-                            },
-                            child: VideoPlayer(_controller))
+                        ? Chewie(
+                            controller: chewieController,
+                          )
                         : Image.file(
                             File(widget.medias[i].path),
                             fit: BoxFit.contain,
@@ -95,7 +98,9 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
                   style: TextStyle(fontSize: 18, color: Colors.white),
                 ),
                 onPressed: () {
-                  uc.uploadFile(widget.medias, extension, widget.user).then((value) {
+                  uc
+                      .uploadFile(widget.medias, extension, widget.user)
+                      .then((value) {
                     if (uc.statusUpload.value == 'success') {
                       Get.back();
                     }
@@ -105,5 +110,13 @@ class _MediaPreviewScreenState extends State<MediaPreviewScreen> {
         ),
       ),
     );
+  }
+
+  @override
+  void dispose() {
+    _controller.dispose();
+    chewieController.dispose();
+
+    super.dispose();
   }
 }

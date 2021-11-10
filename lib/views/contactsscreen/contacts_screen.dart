@@ -4,11 +4,21 @@ import 'package:chat_online_flutter/views/chat/chat_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 
-class ContactsScreen extends StatelessWidget {
-  ContactsScreen({Key? key}) : super(key: key);
+// ignore: must_be_immutable
+class ContactsScreen extends StatefulWidget {
+  const ContactsScreen({Key? key}) : super(key: key);
 
+  @override
+  State<ContactsScreen> createState() => _ContactsScreenState();
+}
+
+class _ContactsScreenState extends State<ContactsScreen> {
   final LoginController lc = Get.put(LoginController());
-  //final ContactController con = Get.put(ContactController());
+
+  final ContactController con = Get.put(ContactController());
+
+  String search = '';
+  bool isSearching = false;
 
   @override
   Widget build(BuildContext context) {
@@ -16,24 +26,42 @@ class ContactsScreen extends StatelessWidget {
       appBar: AppBar(
         leadingWidth: 40,
         titleSpacing: 0,
-        title: Container(
-          height: 43,
-          decoration: BoxDecoration(
-              color: Colors.white, borderRadius: BorderRadius.circular(30)),
-          margin: const EdgeInsets.only(right: 10),
-          child: TextField(
-            style: const TextStyle(fontSize: 18),
-            decoration: const InputDecoration(
-              hintText: 'Pesquisar...',
-              border: InputBorder.none,
-              prefixIcon: Icon(Icons.search),
-              contentPadding: EdgeInsets.only(left: 15, top: 9),
-            ),
-            textInputAction: TextInputAction.search,
-            onSubmitted: (text) {},
-            //autofocus: true,
-          ),
-        ),
+        actions: [
+          IconButton(
+              onPressed: () {
+                setState(() {
+                  search = '';
+                  isSearching ? isSearching = false : isSearching = true;
+                });
+              },
+              icon: Icon(isSearching ? Icons.clear_outlined : Icons.search))
+        ],
+        centerTitle: true,
+        title: !isSearching
+            ? const Text('Contatos')
+            : Container(
+                height: 43,
+                decoration: BoxDecoration(
+                    color: Colors.white,
+                    borderRadius: BorderRadius.circular(30)),
+                margin: const EdgeInsets.only(right: 10),
+                child: TextField(
+                  style: const TextStyle(fontSize: 18),
+                  decoration: const InputDecoration(
+                    hintText: 'Pesquisar...',
+                    border: InputBorder.none,
+                    prefixIcon: Icon(Icons.search),
+                    contentPadding: EdgeInsets.only(left: 15, top: 9),
+                  ),
+                  textInputAction: TextInputAction.search,
+                  onChanged: (text) {
+                    setState(() {
+                      search = text.toUpperCase();
+                    });
+                  },
+                  autofocus: isSearching ? true : false,
+                ),
+              ),
       ),
       body: Container(
         padding: const EdgeInsets.all(13),
@@ -42,11 +70,14 @@ class ContactsScreen extends StatelessWidget {
           builder: (value) => ListView.builder(
             itemCount: value.contacts.length,
             itemBuilder: (c, i) {
-              if (value.state.value == 'loading') {
+              if (value.contacts.isEmpty) {
                 return const Center(
                   child: CircularProgressIndicator(),
                 );
-              } else {
+              } else if (value.contacts[i]
+                  .data()['name']
+                  .toUpperCase()
+                  .contains(search)) {
                 return Column(
                   children: [
                     InkWell(
@@ -108,6 +139,8 @@ class ContactsScreen extends StatelessWidget {
                           )
                   ],
                 );
+              } else {
+                return Container();
               }
             },
           ),

@@ -2,7 +2,6 @@ import 'dart:io';
 import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:get/get.dart';
-import 'package:images_picker/images_picker.dart';
 import 'package:firebase_storage/firebase_storage.dart' as firebase_storage;
 
 class UploadController extends GetxController {
@@ -10,7 +9,7 @@ class UploadController extends GetxController {
   ChatController cc = Get.put(ChatController());
   LoginController lc = Get.put(LoginController());
 
-  Future<void> uploadFile(List<Media> files, String extension, user) async {
+  Future<void> uploadFile(files, String extension, user) async {
     for (var element in files) {
       statusUpload.value = 'uploading';
 

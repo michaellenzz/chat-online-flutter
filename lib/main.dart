@@ -22,9 +22,14 @@ class MyApp extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     OneSignal.shared.setAppId('4b42a942-e307-420a-8c9a-9323d8082ad6');
-    OneSignal.shared.promptUserForPushNotificationPermission().then((accepted) {
-      //print("Accepted permission: $accepted");
+    OneSignal.shared.promptUserForPushNotificationPermission();
+/*
+    OneSignal.shared.setNotificationWillShowInForegroundHandler((event) {});
+*/
+    OneSignal.shared.setNotificationOpenedHandler((openedResult) {
+      //abri app ao clicar na notificação
     });
+
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Chat',

@@ -6,9 +6,11 @@ import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/controllers/upload_controller.dart';
 import 'package:chat_online_flutter/views/home/home_screen.dart';
+import 'package:extended_image/extended_image.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
-import 'package:images_picker/images_picker.dart';
+import 'package:image_cropper/image_cropper.dart';
+import 'package:image_picker/image_picker.dart';
 
 class UpdateProfileScreen extends StatelessWidget {
   // ignore: use_key_in_widget_constructors
@@ -19,11 +21,12 @@ class UpdateProfileScreen extends StatelessWidget {
   LoginController lc = Get.put(LoginController());
   ChatController cc = Get.put(ChatController());
   UploadController uc = Get.put(UploadController());
-  List<Media>? image = [];
+  XFile? image;
+  final ImagePicker _picker = ImagePicker();
 
   final name = TextEditingController();
   final recado = TextEditingController();
-  RxBool makeUpload = false.obs;
+  //RxBool makeUpload = false.obs;
 
   @override
   Widget build(BuildContext context) {
@@ -53,11 +56,12 @@ class UpdateProfileScreen extends StatelessWidget {
                     ),
                     Stack(
                       children: [
-                        makeUpload.value
+                        lc.photoUserLogged.isNotEmpty
                             ? CircleAvatar(
                                 radius: 100,
-                                backgroundImage:
-                                    FileImage(File(image![0].path)),
+                                backgroundImage: ExtendedNetworkImageProvider(
+                                              lc.photoUserLogged,
+                                              cache: true),
                               )
                             : Container(
                                 width: 200,
@@ -81,21 +85,24 @@ class UpdateProfileScreen extends StatelessWidget {
                               icon: const Icon(Icons.camera_alt,
                                   size: 32, color: Colors.blueGrey),
                               onPressed: () async {
-                                image = await ImagesPicker.pick(
-                                    pickType: PickType.image,
-                                    language: Language.System,
-                                    count: 1,
-                                    quality: 0.6,
-                                    cropOpt: CropOption(
-                                        cropType: CropType.rect,
-                                        aspectRatio: CropAspectRatio.custom));
+                                image = await _picker.pickImage(
+                                    source: ImageSource.gallery,
+                                    imageQuality: 70,
+                                    maxHeight: 1500,
+                                    maxWidth: 1500);
 
                                 if (image != null) {
-                                  uc
-                                      .uploadPhotoProfile(image![0])
-                                      .then((value) {
+                                  var img = await ImageCropper.cropImage(
+                                    sourcePath: image!.path,
+                                    aspectRatioPresets: [
+                                      CropAspectRatioPreset.square,
+                                    ],
+                                    maxWidth: 1000,
+                                    maxHeight: 1000,
+                                  );
+                                  uc.uploadPhotoProfile(img).then((value) {
                                     if (uc.statusUpload.value == 'success') {
-                                      makeUpload.value = true;
+                                      
                                     }
                                   });
                                 }
@@ -146,18 +153,15 @@ class UpdateProfileScreen extends StatelessWidget {
                           style: TextStyle(fontSize: 18, color: Colors.white),
                         ),
                         onPressed: () {
-                          if(name.text.isNotEmpty){
+                          if (name.text.isNotEmpty) {
                             lc
-                              .saveDataFirestore(
-                            name.text,
-                            lc.photoUserLogged,
-                            recado.text
-                          )
-                              .then((value) {
-                            if (lc.state.value == 'SUCCESS') {
-                              Get.off(() => HomeScreen());
-                            }
-                          });
+                                .saveDataFirestore(
+                                    name.text, lc.photoUserLogged, recado.text)
+                                .then((value) {
+                              if (lc.state.value == 'SUCCESS') {
+                                Get.off(() => HomeScreen());
+                              }
+                            });
                           }
                         },
                       ),

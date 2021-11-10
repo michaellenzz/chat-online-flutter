@@ -60,24 +60,60 @@ class ContactController extends GetxController {
     });
   }
 
-  String tratarNumeros(number) {
-    // +5561998575936
+  String tratarNumeros(String number) {
     number = number.replaceAll('-', '');
     number = number.replaceAll(' ', '');
+    number = number.replaceAll(')', '');
+    number = number.replaceAll('(', '');
 
+    //completo mas sem o 9
     if (number.startsWith('+55') && number.length == 13) {
-      return number.replaceRange(5, 6, '9');
+      var prefix = number.substring(0, 5);
+      var sufix = number.substring(5, 13);
+      return '${prefix}9$sufix';
     }
 
+    //ok
     if (number.startsWith('+55') && number.length == 14) return number;
 
-    if (number.startsWith('0')) {
+    //061998575936
+    if (number.startsWith('0') && number.length == 12) {
       number = number.replaceRange(0, 1, '');
       return '+55$number';
     }
+
+    //06198575936
+    if (number.startsWith('0') && number.length == 11) {
+      number = number.replaceRange(0, 1, '');
+      var prefix = number.substring(0, 2);
+      var sufix = number.substring(2, 10);
+      return '+55${prefix}9$sufix';
+    }
+
+    //61998575936
     if (number.length == 11) {
       return '+55$number';
     }
+
+    //6198575936
+    if (number.length == 10) {
+      var prefix = number.substring(0, 2);
+      var sufix = number.substring(2, 10);
+      return '+55${prefix}9$sufix';
+    }
+
+    //998575936
+    if (number.length == 9) {
+      var prefix = lc.userLogged.substring(0, 5);
+      return '$prefix$number';
+    }
+
+    //98575936
+    if (number.length == 8) {
+      var prefix = lc.userLogged.substring(0, 5);
+      return '${prefix}9$number';
+    }
+
     return '';
   }
 }
