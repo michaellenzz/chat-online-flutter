@@ -3,14 +3,21 @@ import 'package:chat_online_flutter/controllers/contact_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
 import 'package:chat_online_flutter/views/chat/chat_screen.dart';
 import 'package:chat_online_flutter/views/contactsscreen/contacts_screen.dart';
+import 'package:chat_online_flutter/views/home/about_app.dart';
+import 'package:chat_online_flutter/views/home/photo_view_screen.dart';
+import 'package:chat_online_flutter/views/login/login_screen.dart';
 import 'package:chat_online_flutter/views/profile/update_profile_screen.dart';
 import 'package:extended_image/extended_image.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:permission_handler/permission_handler.dart';
 
 class HomeScreen extends StatelessWidget {
-  HomeScreen({Key? key}) : super(key: key);
+  // ignore: use_key_in_widget_constructors
+  HomeScreen() {
+    lc.friendSelected = '';
+  }
 
   final LoginController lc = Get.put(LoginController());
   final ContactController con = Get.put(ContactController());
@@ -25,6 +32,7 @@ class HomeScreen extends StatelessWidget {
         onPressed: () {
           getPermissionDevice().then((permission) {
             if (permission == true) {
+              con.count = 0;
               con.contacts.clear();
               con.getContactDevice();
               Get.to(() => const ContactsScreen());
@@ -36,11 +44,71 @@ class HomeScreen extends StatelessWidget {
         title: const Text('Flutter Chat'),
         centerTitle: true,
         actions: [
-          IconButton(
-              onPressed: () {
-                Get.to(() => UpdateProfileScreen());
-              },
-              icon: const Icon(Icons.more_vert_rounded))
+          Theme(
+            data: Theme.of(context).copyWith(
+              dividerColor: Colors.black,
+              iconTheme: const IconThemeData(color: Colors.black),
+              textTheme: const TextTheme().apply(bodyColor: Colors.white),
+            ),
+            child: PopupMenuButton<int>(
+              color: Theme.of(context).primaryColor,
+              onSelected: (item) => onSelected(context, item),
+              itemBuilder: (context) => [
+                PopupMenuItem<int>(
+                  value: 0,
+                  child: Row(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: [
+                      const Icon(
+                        Icons.settings,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Configurações',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+                PopupMenuItem<int>(
+                  value: 1,
+                  child: Row(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: [
+                      const Icon(
+                        Icons.info_outline_rounded,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Sobre o app',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+                const PopupMenuDivider(),
+                PopupMenuItem<int>(
+                  value: 2,
+                  child: Row(
+                    // ignore: prefer_const_literals_to_create_immutables
+                    children: [
+                      const Icon(
+                        Icons.logout,
+                        color: Colors.black,
+                      ),
+                      const SizedBox(width: 8),
+                      const Text(
+                        'Sair',
+                        style: TextStyle(color: Colors.black),
+                      ),
+                    ],
+                  ),
+                ),
+              ],
+            ),
+          ),
         ],
       ),
       body: Container(
@@ -59,8 +127,8 @@ class HomeScreen extends StatelessWidget {
                     return InkWell(
                       onTap: () {
                         lc.friendSelected = value.chats[i].id;
-                        Get.to(() => ChatScreen(value.chats[i]));
                         cc.getStatusFriend();
+                        Get.to(() => ChatScreen(value.chats[i]));
                       },
                       child: Column(
                         children: [
@@ -80,12 +148,19 @@ class HomeScreen extends StatelessWidget {
                                         color: Colors.white,
                                       ),
                                     )
-                                  : CircleAvatar(
-                                      radius: 25,
-                                      backgroundImage:
-                                          ExtendedNetworkImageProvider(
-                                              value.chats[i].data()['photo'],
-                                              cache: true),
+                                  : InkWell(
+                                      onTap: () {
+                                        Get.to(() => PhotoView(
+                                            value.chats[i].data()['photo'],
+                                            value.chats[i].data()['name']));
+                                      },
+                                      child: CircleAvatar(
+                                        radius: 25,
+                                        backgroundImage:
+                                            ExtendedNetworkImageProvider(
+                                                value.chats[i].data()['photo'],
+                                                cache: true),
+                                      ),
                                     ),
                               Expanded(
                                 child: Padding(
@@ -117,9 +192,18 @@ class HomeScreen extends StatelessWidget {
                                   Text(
                                     '${time.hour < 10 ? '0${time.hour}' : '${time.hour}'}:${time.minute < 10 ? '0${time.minute}' : '${time.minute}'}',
                                     style: const TextStyle(
-                                        fontSize: 15,
+                                        fontSize: 13,
                                         fontWeight: FontWeight.w400),
                                   ),
+                                  value.chats[i].data()['read'] ??
+                                          true //caso o doc não tenha o campo 'read'
+                                      ? const SizedBox(
+                                          height: 25,
+                                        )
+                                      : const Icon(
+                                          Icons.info,
+                                          color: Colors.green,
+                                        )
                                 ],
                               )
                             ],
@@ -148,6 +232,21 @@ class HomeScreen extends StatelessWidget {
       return true;
     } else {
       return false;
+    }
+  }
+
+  void onSelected(BuildContext context, int item) async {
+    switch (item) {
+      case 0:
+        Get.to(() => UpdateProfileScreen());
+        break;
+      case 1:
+        Get.to(() => const AboutApp());
+        break;
+      case 2:
+        await FirebaseAuth.instance.signOut();
+        Get.off(() => LoginScreen());
+        break;
     }
   }
 }

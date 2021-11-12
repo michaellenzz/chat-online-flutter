@@ -25,12 +25,12 @@ class ProfileScreen extends StatelessWidget {
             expandedHeight: width * 0.8,
             flexibleSpace: FlexibleSpaceBar(
               title: Text(name),
-              background: ExtendedImage.network(
+              background: photo.isNotEmpty ? ExtendedImage.network(
                 photo,
                 fit: BoxFit.fitWidth,
                 cache: true,
                 handleLoadingProgress: true,
-              ),
+              ): const Icon(Icons.person, color: Colors.white, size: 100,)
             ),
           ),
           SliverList(

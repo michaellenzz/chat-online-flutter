@@ -1,7 +1,6 @@
 import 'package:bubble/bubble.dart';
 import 'package:chat_online_flutter/controllers/chat_controller.dart';
 import 'package:chat_online_flutter/controllers/login_controller.dart';
-import 'package:chat_online_flutter/controllers/upload_controller.dart';
 import 'package:chat_online_flutter/views/chat/botton_send.dart';
 import 'package:chat_online_flutter/views/chat/field_message.dart';
 import 'package:chat_online_flutter/views/chat/media_view_screen.dart';
@@ -17,13 +16,14 @@ class ChatScreen extends StatelessWidget {
   // ignore: use_key_in_widget_constructors
   ChatScreen(this.user) {
     cc.getStatusFriend();
+    cc.updateStatusChat();
   }
+
 
   final mensagem = TextEditingController();
 
   final ChatController cc = Get.put(ChatController());
   final LoginController lc = Get.put(LoginController());
-  final UploadController uc = Get.put(UploadController());
 
   List<String> messagesUnread = [];
 
@@ -106,6 +106,9 @@ class ChatScreen extends StatelessWidget {
           padding: const EdgeInsets.fromLTRB(8, 0, 8, 57),
           //pa: const EdgeInsets.only(bottom: 56),
           child: GetBuilder<ChatController>(
+            dispose: (value) {
+              cc.updateStatusChat();
+            },
             init: ChatController(),
             builder: (value) => ListView.builder(
                 reverse: true,

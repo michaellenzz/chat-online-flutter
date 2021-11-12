@@ -8,6 +8,7 @@ class ContactController extends GetxController {
   List<String> phones = [];
   List<String> phonesTemp = [];
   RxString state = 'A LOGAR'.obs;
+  int count = 0;
 
   final LoginController lc = Get.put(LoginController());
 
@@ -31,16 +32,21 @@ class ContactController extends GetxController {
 
     if (phones.length > 10) {
       for (var element in phones) {
+        count++;
         phonesTemp.add(element);
         if (phonesTemp.length == 10) {
           getContactDatabase(phonesTemp);
           phonesTemp.clear();
+        }
+        if(count == phones.length){
+          state.value = 'done';
         }
       }
     } else if (phones.isEmpty) {
       //Não há contatos na agenda
     } else {
       getContactDatabase(phones);
+      state.value = 'done';
     }
   }
 
@@ -52,7 +58,6 @@ class ContactController extends GetxController {
         .snapshots()
         .forEach((element) {
       contacts.addAll(element.docs);
-      state.value = 'success';
       update();
       // ignore: avoid_print
     }).catchError((e) {

@@ -66,85 +66,89 @@ class _ContactsScreenState extends State<ContactsScreen> {
       body: Container(
         padding: const EdgeInsets.all(13),
         child: GetBuilder<ContactController>(
-          init: ContactController(),
-          builder: (value) => ListView.builder(
-            itemCount: value.contacts.length,
-            itemBuilder: (c, i) {
-              if (value.contacts.isEmpty) {
-                return const Center(
-                  child: CircularProgressIndicator(),
-                );
-              } else if (value.contacts[i]
-                  .data()['name']
-                  .toUpperCase()
-                  .contains(search)) {
-                return Column(
-                  children: [
-                    InkWell(
-                      onTap: () {
-                        lc.friendSelected = value.contacts[i].id;
-                        Get.off(() => ChatScreen(value.contacts[i]));
-                      },
-                      child: Row(
-                        children: [
-                          value.contacts[i].data()['photo'].isEmpty
-                              ? Container(
-                                  width: 40,
-                                  height: 40,
-                                  decoration: BoxDecoration(
-                                      borderRadius: BorderRadius.circular(30),
-                                      color: Colors.grey[300]),
-                                  child: const Icon(
-                                    Icons.person,
-                                    size: 35,
-                                    color: Colors.white,
-                                  ),
-                                )
-                              : CircleAvatar(
-                                  radius: 20,
-                                  backgroundImage: NetworkImage(
-                                      value.contacts[i].data()['photo']),
-                                ),
-                          Expanded(
-                            child: Padding(
-                              padding:
-                                  const EdgeInsets.symmetric(horizontal: 10),
-                              child: Column(
-                                crossAxisAlignment: CrossAxisAlignment.start,
-                                // ignore: prefer_const_literals_to_create_immutables
+            init: ContactController(),
+            builder: (value) => value.state.value == 'loading'
+                ? const Center(
+                    child: CircularProgressIndicator(),
+                  )
+                : ListView.builder(
+                    itemCount: value.contacts.length,
+                    itemBuilder: (c, i) {
+                      if (value.contacts[i]
+                          .data()['name']
+                          .toUpperCase()
+                          .contains(search)) {
+                        return Column(
+                          children: [
+                            InkWell(
+                              onTap: () {
+                                lc.friendSelected = value.contacts[i].id;
+                                Get.off(() => ChatScreen(value.contacts[i]));
+                              },
+                              child: Row(
                                 children: [
-                                  Text(
-                                    value.contacts[i].data()['name'],
-                                    style: const TextStyle(
-                                        fontSize: 19,
-                                        fontWeight: FontWeight.w600),
+                                  value.contacts[i].data()['photo'].isEmpty
+                                      ? Container(
+                                          width: 40,
+                                          height: 40,
+                                          decoration: BoxDecoration(
+                                              borderRadius:
+                                                  BorderRadius.circular(30),
+                                              color: Colors.grey[300]),
+                                          child: const Icon(
+                                            Icons.person,
+                                            size: 35,
+                                            color: Colors.white,
+                                          ),
+                                        )
+                                      : CircleAvatar(
+                                          radius: 20,
+                                          backgroundImage: NetworkImage(value
+                                              .contacts[i]
+                                              .data()['photo']),
+                                        ),
+                                  Expanded(
+                                    child: Padding(
+                                      padding: const EdgeInsets.symmetric(
+                                          horizontal: 10),
+                                      child: Column(
+                                        crossAxisAlignment:
+                                            CrossAxisAlignment.start,
+                                        // ignore: prefer_const_literals_to_create_immutables
+                                        children: [
+                                          Text(
+                                            value.contacts[i].data()['name'],
+                                            style: const TextStyle(
+                                                fontSize: 19,
+                                                fontWeight: FontWeight.w600),
+                                          ),
+                                          Text(
+                                              value.contacts[i]
+                                                  .data()['phrase'],
+                                              maxLines: 1,
+                                              style: TextStyle(
+                                                  fontSize: 15,
+                                                  fontWeight: FontWeight.w400,
+                                                  color: Colors.grey[800])),
+                                        ],
+                                      ),
+                                    ),
                                   ),
-                                  Text(value.contacts[i].data()['phrase'],
-                                      maxLines: 1,
-                                      style: TextStyle(
-                                          fontSize: 15,
-                                          fontWeight: FontWeight.w400,
-                                          color: Colors.grey[800])),
                                 ],
                               ),
                             ),
-                          ),
-                        ],
-                      ),
-                    ),
-                    i == value.contacts.length - 1
-                        ? Container()
-                        : const Divider(
-                            height: 30,
-                          )
-                  ],
-                );
-              } else {
-                return Container();
-              }
-            },
-          ),
-        ),
+                            i == value.contacts.length - 1
+                                ? Container()
+                                : const Divider(
+                                    height: 30,
+                                  )
+                          ],
+                        );
+                      } else {
+                        return Container();
+                      }
+                    },
+                  )),
       ),
     );
   }

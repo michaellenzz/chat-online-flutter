@@ -41,7 +41,7 @@ class UploadController extends GetxController {
 
     ///Start uploading
     String fileName = DateTime.now().millisecondsSinceEpoch.toString();
-    String path = 'medias/$fileName.jpg';
+    String path = 'profile/$fileName.jpg';
     firebase_storage.Reference reference =
         firebase_storage.FirebaseStorage.instance.ref(path);
 
@@ -51,10 +51,10 @@ class UploadController extends GetxController {
 
     ///Get the download url of the file
     lc.photoUserLogged = await uploadTask.ref.getDownloadURL();
+    update();
 
     if (uploadTask.state == firebase_storage.TaskState.success) {
       statusUpload.value = 'success';
-
     } else {
       statusUpload.value = 'fail';
     }

@@ -71,6 +71,22 @@ class ChatController extends GetxController {
         .update({'status': 'read'});
   }
 
+  updateStatusChat() {
+    FirebaseFirestore.instance
+        .collection('users')
+        .doc(lc.userLogged.value)
+        .collection('chats')
+        .doc(lc.friendSelected)
+        .update({'read': true});
+  }
+
+  deleteMessages(String messageId) async {
+    await FirebaseFirestore.instance
+        .collection('messages')
+        .doc(messageId)
+        .delete();
+  }
+
   verifyPresense(bool online) {
     var time = Timestamp.now().toDate();
     var hour =
@@ -113,10 +129,12 @@ class ChatController extends GetxController {
       'lastMessage': message ?? 'Imagem',
       'lastTime': Timestamp.now(),
       'name': lc.nameUserLogged,
-      'photo': lc.photoUserLogged
+      'photo': lc.photoUserLogged,
+      'read': false,
     }, SetOptions(merge: true));
 
     nc.sendNotification(
-        lc.playerId, lc.nameUserLogged, lc.photoUserLogged, message, photo: extension == 'jpg' ? urlFile : '');
+        lc.playerId, lc.nameUserLogged, lc.photoUserLogged, message,
+        photo: extension == 'jpg' ? urlFile : '');
   }
 }

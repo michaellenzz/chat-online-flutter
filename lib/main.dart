@@ -23,13 +23,30 @@ class MyApp extends StatelessWidget {
   Widget build(BuildContext context) {
     OneSignal.shared.setAppId('4b42a942-e307-420a-8c9a-9323d8082ad6');
     OneSignal.shared.promptUserForPushNotificationPermission();
-/*
-    OneSignal.shared.setNotificationWillShowInForegroundHandler((event) {});
-*/
-    OneSignal.shared.setNotificationOpenedHandler((openedResult) {
-      //abri app ao clicar na notificação
-    });
 
+    OneSignal.shared.setNotificationWillShowInForegroundHandler((event) {
+      var notify = event.notification.additionalData;
+      print('ppppppppppppppppppppppp');
+        if(notify!["sender"] == lc.friendSelected){
+          OneSignal.shared.removeNotification(int.parse(event.notification.notificationId));
+        }
+    });
+/*
+    OneSignal.shared.setNotificationOpenedHandler((notification) {
+      var notify = notification.notification.additionalData;
+      if (notify!["type"] == "message") {
+        //open DM(user: notify["id"])
+        print('aaaaaaaaaaaaaaaaaaaaaaaaaaaaa');
+      }
+      if (notify["type"] == "user") {
+        //open Profileo(notify["id"])
+      }
+      if (notify["type"] == "post") {
+        //open ViewPost(notify["id"])
+      }
+      print('Opened');
+    });
+*/
     return GetMaterialApp(
         debugShowCheckedModeBanner: false,
         title: 'Flutter Chat',
