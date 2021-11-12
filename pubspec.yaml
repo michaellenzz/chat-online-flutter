@@ -3,7 +3,7 @@ description: Um app de chat com Flutter, Firebase e OneSignal
 
 publish_to: 'none' # Remove this line if you wish to publish to pub.dev
 
-version: 1.0.1+2
+version: 1.0.2+3
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
@@ -25,7 +25,7 @@ dependencies:
   video_player: ^2.2.6
   chewie: ^1.2.2
   permission_handler: ^8.2.6
-  onesignal_flutter: ^3.2.3
+  onesignal_flutter: ^3.2.5
   firebase_messaging: ^10.0.8
   extended_image: ^5.1.3
   image_picker: ^0.8.4+4

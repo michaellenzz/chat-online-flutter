@@ -12,7 +12,7 @@ class NotificationController extends GetxController {
       content: message ?? 'Imagem',
       bigPicture: photo,
       androidLargeIcon: photoFriend,
-      additionalData: {'type': 'message', 'sender': lc.friendSelected},
+      additionalData: {'sender': lc.userLogged.value},
     ));
   }
 }

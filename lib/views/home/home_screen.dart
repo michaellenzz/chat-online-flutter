@@ -88,6 +88,7 @@ class HomeScreen extends StatelessWidget {
                     ],
                   ),
                 ),
+                /*
                 const PopupMenuDivider(),
                 PopupMenuItem<int>(
                   value: 2,
@@ -105,7 +106,7 @@ class HomeScreen extends StatelessWidget {
                       ),
                     ],
                   ),
-                ),
+                ),*/
               ],
             ),
           ),

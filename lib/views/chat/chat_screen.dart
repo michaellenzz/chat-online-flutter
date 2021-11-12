@@ -19,7 +19,6 @@ class ChatScreen extends StatelessWidget {
     cc.updateStatusChat();
   }
 
-
   final mensagem = TextEditingController();
 
   final ChatController cc = Get.put(ChatController());
@@ -108,6 +107,7 @@ class ChatScreen extends StatelessWidget {
           child: GetBuilder<ChatController>(
             dispose: (value) {
               cc.updateStatusChat();
+              lc.friendSelected = '';
             },
             init: ChatController(),
             builder: (value) => ListView.builder(

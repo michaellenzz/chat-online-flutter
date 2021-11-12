@@ -14,11 +14,11 @@
       },
       "oauth_client": [
         {
-          "client_id": "747192730610-d3ct78lmkf3sru46sprn25k7o05ippti.apps.googleusercontent.com",
+          "client_id": "747192730610-ij5htab42p8atgs1an1r3g74gvrg4uar.apps.googleusercontent.com",
           "client_type": 1,
           "android_info": {
             "package_name": "com.lenzsoft.chat_online_flutter",
-            "certificate_hash": "ff1a671c4db4a35ad5a724aabc682cbf87bd0dcd"
+            "certificate_hash": "6090702d5f3bbe018b5a84ee3782be450cbe3349"
           }
         },
         {
