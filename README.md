@@ -19,7 +19,7 @@
 </ul>
 <p>Aqui est&aacute; o link para quem quiser testar:</p>
 <p><a href="https://play.google.com/store/apps/details?id=com.lenzsoft.chat_online_flutter">https://play.google.com/store/apps/details?id=com.lenzsoft.chat_online_flutter</a></p>
-
+<p>Meu contato: michael-lenz@hotmail.com</p>
 
 <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
 <img src="https://user-images.githubusercontent.com/51023093/141521115-1e685eac-b098-4ebf-9406-709242b70469.png" width="200" />
