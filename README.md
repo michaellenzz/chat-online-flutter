@@ -18,9 +18,5 @@
 </ul>
 <p>Aqui est&aacute; o link para quem quiser testar:</p>
 <p><a href="https://play.google.com/store/apps/details?id=com.lenzsoft.chat_online_flutter">https://play.google.com/store/apps/details?id=com.lenzsoft.chat_online_flutter</a></p>
-[![Watch the video](https://img.youtube.com/vi/T-D1KVIuvjA/maxresdefault.jpg)](https://youtu.be/T-D1KVIuvjA)
-<p><iframe src="//www.youtube.com/embed/5Jjenm3iL04" width="300" height="168" allowfullscreen="allowfullscreen"></iframe></p>
-<iframe width="420" height="315"
-src="https://www.youtube.com/embed/tgbNymZ7vqY">
-</iframe>
+![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
 <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
