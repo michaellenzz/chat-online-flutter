@@ -18,5 +18,5 @@
 </ul>
 <p>Aqui est&aacute; o link para quem quiser testar:</p>
 <p><a href="https://play.google.com/store/apps/details?id=com.lenzsoft.chat_online_flutter">https://play.google.com/store/apps/details?id=com.lenzsoft.chat_online_flutter</a></p>
-![Alt Text](https://media.giphy.com/media/vFKqnCdLPNOKc/giphy.gif)
+<img src="https://firebasestorage.googleapis.com/v0/b/chat-flutter-931df.appspot.com/o/output.gif?alt=media&token=ecdfd7e4-29d2-4501-bc7e-e9507a99a151" width="640 height="320" />
 <p>&nbsp; &nbsp; &nbsp; &nbsp; &nbsp;</p>
