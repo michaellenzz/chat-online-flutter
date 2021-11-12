@@ -4,6 +4,7 @@
 <ul>
 <li>Flutter;</li>
 <li>Firebase;</li>
+<li>GetX;</li>
 <li>OneSignal;&nbsp;</li>
 </ul>
 <h2 style="color: #2e6c80;">Algumas funcionalidades:</h2>
